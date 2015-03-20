@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full 
+copyright notices and license terms. -->
+<form string="CSV Profile">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="active"/>
+    <field name="active"/>
+    <label name="model"/>
+    <field name="model"/>
+    <label name="header"/>
+    <field name="header"/>
+    <label name="separator"/>
+    <field name="separator"/>
+    <label name="quote"/>
+    <field name="quote"/>
+    <label name="match_expression"/>
+    <field name="match_expression"/>
+    <label name="character_encoding"/>
+    <field name="character_encoding"/>
+    <label name="thousands_separator"/>
+    <field name="thousands_separator"/>
+    <label name="decimal_separator"/>
+    <field name="decimal_separator"/>
+    <field name="columns" colspan="6"/>
+</form>

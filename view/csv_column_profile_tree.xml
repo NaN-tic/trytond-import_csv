@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full 
+copyright notices and license terms. -->
+<tree string="CSV Columns Profiles">
+    <field name="csv_profile"/>
+    <field name="field"/>
+    <field name="column"/>
+    <field name="ttype"/>
+    <field name="date_format"/>
+</tree>

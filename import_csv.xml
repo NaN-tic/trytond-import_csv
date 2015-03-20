@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!-- This file is part of csv_sale_payment module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tryton>
+    <data>
+        <menuitem
+            parent="ir.menu_administration"
+            name="Import CSV Profiles"
+            id="main_menu_import_csv"/>
+
+        <!-- csv.profile -->
+        <record model="ir.ui.view" id="csv_profile_tree_view">
+            <field name="model">csv.profile</field>
+            <field name="type">tree</field>
+            <field name="name">csv_profile_tree</field>
+        </record>
+        <record model="ir.ui.view" id="csv_profile_form_view">
+            <field name="model">csv.profile</field>
+            <field name="type">form</field>
+            <field name="name">csv_profile_form</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_csv_profile">
+            <field name="name">Import CSV Profiles</field>
+            <field name="res_model">csv.profile</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_profile_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="csv_profile_tree_view"/>
+            <field name="act_window" ref="act_csv_profile"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_profile_form">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="csv_profile_form_view"/>
+            <field name="act_window" ref="act_csv_profile"/>
+        </record>
+        <menuitem
+            parent="main_menu_import_csv"
+            action="act_csv_profile"
+            id="menu_import_csv_profiles"
+            sequence="10"/>
+
+        <!-- csv.column.profile -->
+        <record model="ir.ui.view" id="csv_column_profile_tree_view">
+            <field name="model">csv.column.profile</field>
+            <field name="type">tree</field>
+            <field name="name">csv_column_profile_tree</field>
+        </record>
+        <record model="ir.ui.view" id="csv_column_profile_form_view">
+            <field name="model">csv.column.profile</field>
+            <field name="type">form</field>
+            <field name="name">csv_column_profile_form</field>
+        </record>
+
+        <!-- csv.import.log -->
+        <record model="ir.ui.view" id="csv_import_log_tree_view">
+            <field name="model">csv.import.log</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="30"/>
+            <field name="name">csv_import_log_tree</field>
+        </record>
+        <record model="ir.action.act_window" id="act_csv_imported_logs">
+            <field name="name">Import CSV Logs</field>
+            <field name="res_model">csv.import.log</field>
+            <field name="domain">[('origin', '=', (Eval('active_model'),Eval('active_id')))]</field>
+        </record>
+        <record model="ir.action.act_window" id="act_csv_import_logs">
+            <field name="name">Import CSV Logs</field>
+            <field name="res_model">csv.import.log</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_csv_import_logs_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="csv_import_log_tree_view"/>
+            <field name="act_window" ref="act_csv_import_logs"/>
+        </record>
+        <menuitem
+            parent="main_menu_import_csv"
+            action="act_csv_import_logs"
+            id="menu_import_csv_import"
+            sequence="10"/>
+
+    </data>
+</tryton>
+    
