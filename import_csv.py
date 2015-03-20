@@ -1,5 +1,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+from StringIO import StringIO
+from csv import reader
 from datetime import datetime, date, time
 from decimal import Decimal
 from trytond.model import fields, ModelSQL, ModelView
@@ -77,6 +79,20 @@ class CSVProfile(ModelSQL, ModelView):
     @staticmethod
     def default_decimal_separator():
         return ","
+
+    def read_csv_file(self, archive):
+        '''Read CSV data'''
+        separator = self.separator
+        if separator == "tab":
+            separator = '\t'
+        quote = self.quote
+
+        data = StringIO(archive)
+        if quote:
+            rows = reader(data, delimiter=str(separator), quotechar=str(quote))
+        else:
+            rows = reader(data, delimiter=str(separator))
+        return rows
 
 
 class CSVColumnProfile(ModelSQL, ModelView):
