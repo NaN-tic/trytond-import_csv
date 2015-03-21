@@ -21,7 +21,6 @@ class ImportCSVTestCase(unittest.TestCase):
         'Test depends'
         test_depends()
 
-
 def suite():
     suite = trytond.tests.test_tryton.suite()
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(

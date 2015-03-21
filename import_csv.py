@@ -8,7 +8,6 @@ from trytond.model import fields, ModelSQL, ModelView
 from trytond.pool import Pool
 from trytond.pyson import Eval, In, Not
 
-
 __all__ = ['CSVProfile', 'CSVColumnProfile', 'CSVImportLog']
 
 

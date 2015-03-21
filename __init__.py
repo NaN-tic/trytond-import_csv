@@ -3,7 +3,6 @@
 from trytond.pool import Pool
 from .import_csv import *
 
-
 def register():
     Pool.register(
         CSVProfile,
