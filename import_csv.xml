@@ -9,75 +9,75 @@ copyright notices and license terms. -->
             name="Import CSV Profiles"
             id="main_menu_import_csv"/>
 
-        <!-- csv.profile -->
-        <record model="ir.ui.view" id="csv_profile_tree_view">
-            <field name="model">csv.profile</field>
+        <!-- profile.csv -->
+        <record model="ir.ui.view" id="profile_csv_tree_view">
+            <field name="model">profile.csv</field>
             <field name="type">tree</field>
-            <field name="name">csv_profile_tree</field>
+            <field name="name">profile_csv_tree</field>
         </record>
-        <record model="ir.ui.view" id="csv_profile_form_view">
-            <field name="model">csv.profile</field>
+        <record model="ir.ui.view" id="profile_csv_form_view">
+            <field name="model">profile.csv</field>
             <field name="type">form</field>
-            <field name="name">csv_profile_form</field>
+            <field name="name">profile_csv_form</field>
         </record>
 
-        <record model="ir.action.act_window" id="act_csv_profile">
+        <record model="ir.action.act_window" id="act_profile_csv">
             <field name="name">Import CSV Profiles</field>
-            <field name="res_model">csv.profile</field>
+            <field name="res_model">profile.csv</field>
         </record>
-        <record model="ir.action.act_window.view" id="act_csv_profile_tree">
+        <record model="ir.action.act_window.view" id="act_profile_csv_tree">
             <field name="sequence" eval="10"/>
-            <field name="view" ref="csv_profile_tree_view"/>
-            <field name="act_window" ref="act_csv_profile"/>
+            <field name="view" ref="profile_csv_tree_view"/>
+            <field name="act_window" ref="act_profile_csv"/>
         </record>
-        <record model="ir.action.act_window.view" id="act_csv_profile_form">
+        <record model="ir.action.act_window.view" id="act_profile_csv_form">
             <field name="sequence" eval="20"/>
-            <field name="view" ref="csv_profile_form_view"/>
-            <field name="act_window" ref="act_csv_profile"/>
+            <field name="view" ref="profile_csv_form_view"/>
+            <field name="act_window" ref="act_profile_csv"/>
         </record>
         <menuitem
             parent="main_menu_import_csv"
-            action="act_csv_profile"
-            id="menu_import_csv_profiles"
+            action="act_profile_csv"
+            id="menu_import_profile_csvs"
             sequence="10"/>
 
-        <!-- csv.column.profile -->
-        <record model="ir.ui.view" id="csv_column_profile_tree_view">
-            <field name="model">csv.column.profile</field>
+        <!-- profile.csv.column -->
+        <record model="ir.ui.view" id="profile_csv_column_tree_view">
+            <field name="model">profile.csv.column</field>
             <field name="type">tree</field>
-            <field name="name">csv_column_profile_tree</field>
+            <field name="name">profile_csv_column_tree</field>
         </record>
-        <record model="ir.ui.view" id="csv_column_profile_form_view">
-            <field name="model">csv.column.profile</field>
+        <record model="ir.ui.view" id="profile_csv_column_form_view">
+            <field name="model">profile.csv.column</field>
             <field name="type">form</field>
-            <field name="name">csv_column_profile_form</field>
+            <field name="name">profile_csv_column_form</field>
         </record>
 
-        <!-- csv.import.log -->
-        <record model="ir.ui.view" id="csv_import_log_tree_view">
-            <field name="model">csv.import.log</field>
+        <!-- import.csv.log -->
+        <record model="ir.ui.view" id="import_csv_log_tree_view">
+            <field name="model">import.csv.log</field>
             <field name="type">tree</field>
             <field name="priority" eval="30"/>
-            <field name="name">csv_import_log_tree</field>
+            <field name="name">import_csv_log_tree</field>
         </record>
-        <record model="ir.action.act_window" id="act_csv_imported_logs">
+        <record model="ir.action.act_window" id="act_imported_csv_logs">
             <field name="name">Import CSV Logs</field>
-            <field name="res_model">csv.import.log</field>
+            <field name="res_model">import.csv.log</field>
             <field name="domain">[('origin', '=', (Eval('active_model'),Eval('active_id')))]</field>
         </record>
-        <record model="ir.action.act_window" id="act_csv_import_logs">
+        <record model="ir.action.act_window" id="act_import_csv_logs">
             <field name="name">Import CSV Logs</field>
-            <field name="res_model">csv.import.log</field>
+            <field name="res_model">import.csv.log</field>
         </record>
-        <record model="ir.action.act_window.view" id="act_csv_import_logs_tree">
+        <record model="ir.action.act_window.view" id="act_import_csv_logs_tree">
             <field name="sequence" eval="10"/>
-            <field name="view" ref="csv_import_log_tree_view"/>
-            <field name="act_window" ref="act_csv_import_logs"/>
+            <field name="view" ref="import_csv_log_tree_view"/>
+            <field name="act_window" ref="act_import_csv_logs"/>
         </record>
         <menuitem
             parent="main_menu_import_csv"
-            action="act_csv_import_logs"
-            id="menu_import_csv_import"
+            action="act_import_csv_logs"
+            id="menu_import_import_csv"
             sequence="10"/>
 
     </data>

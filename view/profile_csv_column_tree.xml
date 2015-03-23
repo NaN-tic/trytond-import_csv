@@ -2,7 +2,7 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full 
 copyright notices and license terms. -->
 <tree string="CSV Columns Profiles">
-    <field name="csv_profile"/>
+    <field name="profile_csv"/>
     <field name="field"/>
     <field name="column"/>
     <field name="ttype"/>

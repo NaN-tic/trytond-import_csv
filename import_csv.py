@@ -9,12 +9,12 @@ from trytond.pool import Pool
 from trytond.pyson import Eval, In, Not
 
 
-__all__ = ['CSVProfile', 'CSVColumnProfile', 'CSVImportLog']
+__all__ = ['ProfileCSV', 'ProfileCSVColumn', 'ImportCSVLog']
 
 
-class CSVProfile(ModelSQL, ModelView):
-    'CSV Profile'
-    __name__ = 'csv.profile'
+class ProfileCSV(ModelSQL, ModelView):
+    'Profile CSV'
+    __name__ = 'profile.csv'
     name = fields.Char('Name', required=True)
     model = fields.Many2One('ir.model', 'Model', required=True)
     header = fields.Boolean('Header',
@@ -50,7 +50,7 @@ class CSVProfile(ModelSQL, ModelView):
             ], 'Decimal Separator', help=("If there are a number the "
                 "decimal separator used"),
         required=True)
-    columns = fields.One2Many('csv.column.profile', 'csv_profile', 'Columns')
+    columns = fields.One2Many('profile.csv.column', 'profile_csv', 'Columns')
 
     @staticmethod
     def default_active():
@@ -95,15 +95,15 @@ class CSVProfile(ModelSQL, ModelView):
         return rows
 
 
-class CSVColumnProfile(ModelSQL, ModelView):
-    'CSV Column Profile'
-    __name__ = 'csv.column.profile'
-    csv_profile = fields.Many2One('csv.profile', 'CSV Profile')
+class ProfileCSVColumn(ModelSQL, ModelView):
+    'Profile CSV Column'
+    __name__ = 'profile.csv.column'
+    profile_csv = fields.Many2One('profile.csv', 'Profile CSV')
     column = fields.Char('Columns', required=True,
         help='The position of the columns separated by commas corresponding '
         'to this field.')
     field = fields.Many2One('ir.model.field', 'Field',
-        domain=[('model.model', '=', 'account.bank.statement.line')],
+        domain=[('model', '=', Eval('_parent_profile_csv', {}).get('model'))],
         select=True, required=True)
     ttype = fields.Function(fields.Char('Field Type'), 'on_change_with_ttype')
     date_format = fields.Char('Date Format',
@@ -127,7 +127,7 @@ class CSVColumnProfile(ModelSQL, ModelView):
 
     @classmethod
     def __setup__(cls):
-        super(CSVColumnProfile, cls).__setup__()
+        super(ProfileCSVColumn, cls).__setup__()
         cls._error_messages.update({
                 'columns_must_be_integers':
                     'Columns on field \'%s\' must be integers separated by '
@@ -176,7 +176,7 @@ class CSVColumnProfile(ModelSQL, ModelView):
 
     @classmethod
     def validate(cls, records):
-        super(CSVColumnProfile, cls).validate(records)
+        super(ProfileCSVColumn, cls).validate(records)
         cls.check_columns(records)
 
     @classmethod
@@ -197,8 +197,8 @@ class CSVColumnProfile(ModelSQL, ModelView):
             return self.field.ttype
 
     def get_numeric(self, value):
-        thousands_separator = self.csv_profile.thousands_separator
-        decimal_separator = self.csv_profile.decimal_separator
+        thousands_separator = self.profile_csv.thousands_separator
+        decimal_separator = self.profile_csv.decimal_separator
         if thousands_separator != 'none':
             value = value.replace(thousands_separator, '')
         if decimal_separator == ',':
@@ -211,7 +211,7 @@ class CSVColumnProfile(ModelSQL, ModelView):
         return value
 
     def get_char(self, value):
-        character_encoding = self.csv_profile.character_encoding
+        character_encoding = self.profile_csv.character_encoding
         try:
             value = value.decode(character_encoding)
         except:
@@ -279,9 +279,9 @@ class CSVColumnProfile(ModelSQL, ModelView):
         return getattr(self, 'get_%s' % self.ttype)(value)
 
 
-class CSVImportLog(ModelSQL, ModelView):
-    'CSV Import Log'
-    __name__ = 'csv.import.log'
+class ImportCSVLog(ModelSQL, ModelView):
+    'Import CSV Log'
+    __name__ = 'import.csv.log'
     _rec_name = 'status'
     status = fields.Selection([
             ('done', 'Done'),

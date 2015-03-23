@@ -6,7 +6,7 @@ from .import_csv import *
 
 def register():
     Pool.register(
-        CSVProfile,
-        CSVColumnProfile,
-        CSVImportLog,
+        ProfileCSV,
+        ProfileCSVColumn,
+        ImportCSVLog,
         module='import_csv', type_='model')
