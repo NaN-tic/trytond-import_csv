@@ -40,7 +40,7 @@ tests_require = ['proteus >= %s.%s, < %s.%s' %
 
 setup(name='%s_%s' % (PREFIX, MODULE),
     version=info.get('version', '0.0.1'),
-    description='Tryton Account Bank Statemenet CSV',
+    description='Tryton module to import generic CSV files',
     long_description=read('README'),
     author='Zikzakmedia',
     url='http://www.zikzakmedia.com/',
