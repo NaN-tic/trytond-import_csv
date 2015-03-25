@@ -200,7 +200,7 @@ msgstr "Nom"
 
 msgctxt "field:profile.csv,quote:"
 msgid "Quote"
-msgstr "Pressupost"
+msgstr "Delimitador"
 
 msgctxt "field:profile.csv,rec_name:"
 msgid "Name"
