@@ -294,6 +294,7 @@ class ImportCSVLog(ModelSQL, ModelView):
             'readonly': True,
             })
     comment = fields.Text('Comment')
+    date_time = fields.DateTime('Date and Time')
 
     @staticmethod
     def _get_origin():

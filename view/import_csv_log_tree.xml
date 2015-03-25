@@ -4,6 +4,7 @@ The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <tree string="Import CSV Logs">
     <field name="origin" tree_invisible="1"/>
+    <field name="date_time"/>
     <field name="status"/>
     <field name="comment"/>
 </tree>
