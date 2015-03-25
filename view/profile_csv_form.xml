@@ -22,5 +22,5 @@ copyright notices and license terms. -->
     <field name="thousands_separator"/>
     <label name="decimal_separator"/>
     <field name="decimal_separator"/>
-    <field name="columns" colspan="6"/>
+    <field name="columns" colspan="4"/>
 </form>
