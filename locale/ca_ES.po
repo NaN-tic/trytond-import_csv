@@ -126,6 +126,10 @@ msgctxt "field:import.csv.log,create_uid:"
 msgid "Create User"
 msgstr "Usuari creació"
 
+msgctxt "field:import.csv.log,date_time:"
+msgid "Date and Time"
+msgstr "Data i hora"
+
 msgctxt "field:import.csv.log,id:"
 msgid "ID"
 msgstr "Identificador"
