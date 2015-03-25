@@ -98,7 +98,7 @@ class ProfileCSV(ModelSQL, ModelView):
 class ProfileCSVColumn(ModelSQL, ModelView):
     'Profile CSV Column'
     __name__ = 'profile.csv.column'
-    profile_csv = fields.Many2One('profile.csv', 'Profile CSV')
+    profile_csv = fields.Many2One('profile.csv', 'Profile CSV', required=True)
     column = fields.Char('Columns', required=True,
         help='The position of the columns separated by commas corresponding '
         'to this field.')
