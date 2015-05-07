@@ -4,6 +4,7 @@ from StringIO import StringIO
 from csv import reader
 from datetime import datetime, date, time
 from decimal import Decimal
+import logging
 from trytond.model import fields, ModelSQL, ModelView
 from trytond.pool import Pool
 from trytond.pyson import Eval, In, Not
@@ -124,6 +125,15 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'To see more information visit: '
             'https://docs.python.org/2/library/datetime.html'
             '?highlight=datetime#strftime-and-strptime-behavior')
+    search_record_code = fields.Text('Search Record Code', states={
+            'invisible': Eval('ttype') != 'many2one',
+            },
+        help='Type the python code for mapping this field.\n'
+            'You can use:\n'
+            '  * self: To make reference to this mapping record.\n'
+            '  * pool: To make reference to the data base objects.\n'
+            '  * value: The value of this field.\n'
+            'You must assign the result to a variable called "result".')
 
     @classmethod
     def __setup__(cls):
@@ -267,9 +277,35 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         self.raise_user_error('not_implemented_error',
             error_args=(value))
 
+    def get_result(self, value):
+        logger = logging.getLogger('base_external_mapping')
+        localspace = {
+            'self': self,
+            'pool': Pool(),
+            'value': value,
+        }
+        try:
+            exec self.search_record_code in localspace
+        except SyntaxError, e:
+            logger.error('Syntax Error in mapping %s field.'
+                ' Error: %s' %
+                (self.field.name, e))
+            return False
+        except NameError, e:
+            logger.error('Name Error in mapping %s field.'
+                ' Error: %s' %
+                (self.field.name, e))
+            return False
+        except Exception, e:
+            logger.error('Unknown Error in mapping %s field.'
+                '%s. Message: %s' %
+                (self.field.name, e))
+            return False
+        return localspace['result'] if 'result' in localspace else None
+
     def get_many2one(self, value):
-        self.raise_user_error('not_implemented_error',
-            error_args=(value))
+        if self.search_record_code:
+            return self.get_result(value)
 
     def get_one2many(self, value):
         self.raise_user_error('not_implemented_error',

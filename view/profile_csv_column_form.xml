@@ -13,4 +13,6 @@ copyright notices and license terms. -->
     <field name="date_format"/>
     <label name="profile_csv"/>
     <field name="profile_csv"/>
+    <label name="search_record_code" colspan="4" xalign="0.0"/>
+    <field name="search_record_code" colspan="4"/>
 </form>
