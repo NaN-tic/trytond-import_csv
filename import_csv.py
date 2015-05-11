@@ -332,6 +332,11 @@ class ImportCSVLog(ModelSQL, ModelView):
     comment = fields.Text('Comment')
     date_time = fields.DateTime('Date and Time')
 
+    @classmethod
+    def __setup__(cls):
+        super(ImportCSVLog, cls).__setup__()
+        cls._order.insert(0, ('date_time', 'DESC'))
+
     @staticmethod
     def _get_origin():
         'Return list of Model names for origin Reference'
