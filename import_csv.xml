@@ -9,6 +9,15 @@ copyright notices and license terms. -->
             name="Import CSV Profiles"
             id="main_menu_import_csv"/>
 
+        <!-- groups -->
+        <record model="res.group" id="group_import_csv_user">
+            <field name="name">Import CSV User</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_import_csv_user">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_import_csv_user"/>
+        </record>
+
         <!-- profile.csv -->
         <record model="ir.ui.view" id="profile_csv_tree_view">
             <field name="model">profile.csv</field>
@@ -74,11 +83,17 @@ copyright notices and license terms. -->
             <field name="view" ref="import_csv_log_tree_view"/>
             <field name="act_window" ref="act_import_csv_logs"/>
         </record>
+        <record model="ir.action-res.group"
+                id="act_imported_csv_logs-group_import_csv_user">
+            <field name="action" ref="act_imported_csv_logs"/>
+            <field name="group" ref="group_import_csv_user"/>
+        </record>
         <menuitem
             parent="main_menu_import_csv"
             action="act_import_csv_logs"
             id="menu_import_import_csv"
             sequence="10"/>
+
     </data>
 </tryton>
     
