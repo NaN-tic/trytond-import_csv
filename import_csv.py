@@ -322,15 +322,31 @@ class ImportCSVLog(ModelSQL, ModelView):
     status = fields.Selection([
             ('done', 'Done'),
             ('skipped', 'Skipped'),
-            ], 'Status')
+            ], 'Status',
+        states={
+            'readonly': True,
+            })
     origin = fields.Reference('Origin', selection='get_origin', select=True,
         states={
             'required': True,
             'invisible': True,
             'readonly': True,
             })
-    comment = fields.Text('Comment')
-    date_time = fields.DateTime('Date and Time')
+    comment = fields.Text('Comment', states={
+            'readonly': True,
+            })
+    date_time = fields.DateTime('Date and Time', states={
+            'readonly': True,
+            })
+    parent = fields.Many2One('import.csv.log', 'Parent', states={
+            'invisible': True,
+            'readonly': True,
+            },
+        )
+    children = fields.One2Many('import.csv.log', 'parent', 'Log Lines',
+        states={
+            'readonly': True,
+            })
 
     @classmethod
     def __setup__(cls):

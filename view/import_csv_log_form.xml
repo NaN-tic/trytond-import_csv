@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- This file is part of import_csv module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form string="Import CSV Logs" col="4">
+    <label name="date_time"/>
+    <field name="date_time"/>
+    <label name="status"/>
+    <field name="status"/>
+    <label name="comment"/>
+    <field name="comment" colspan="4"/>
+    <field name="children" colspan="4"
+        view_ids="import_csv.import_csv_log_tree_view"/>
+    <field name="origin"/>
+    <field name="parent"/>
+</form>

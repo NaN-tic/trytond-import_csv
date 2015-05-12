@@ -69,6 +69,12 @@ copyright notices and license terms. -->
             <field name="priority" eval="30"/>
             <field name="name">import_csv_log_tree</field>
         </record>
+        <record model="ir.ui.view" id="import_csv_log_form_view">
+            <field name="model">import.csv.log</field>
+            <field name="type">form</field>
+            <field name="priority" eval="30"/>
+            <field name="name">import_csv_log_form</field>
+        </record>
         <record model="ir.action.act_window" id="act_imported_csv_logs">
             <field name="name">Import CSV Logs</field>
             <field name="res_model">import.csv.log</field>
@@ -77,10 +83,16 @@ copyright notices and license terms. -->
         <record model="ir.action.act_window" id="act_import_csv_logs">
             <field name="name">Import CSV Logs</field>
             <field name="res_model">import.csv.log</field>
+            <field name="domain">[('parent', '=', None)]</field>
         </record>
         <record model="ir.action.act_window.view" id="act_import_csv_logs_tree">
             <field name="sequence" eval="10"/>
             <field name="view" ref="import_csv_log_tree_view"/>
+            <field name="act_window" ref="act_import_csv_logs"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_import_csv_logs_form">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="import_csv_log_form_view"/>
             <field name="act_window" ref="act_import_csv_logs"/>
         </record>
         <record model="ir.action-res.group"
