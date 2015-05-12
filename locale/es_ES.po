@@ -114,6 +114,10 @@ msgctxt "error:profile.csv.column:"
 msgid "This kind of field is not implemented yet."
 msgstr "Este tipo de campo no está implementado todavía."
 
+msgctxt "field:import.csv.log,children:"
+msgid "Log Lines"
+msgstr "Líneas de registro"
+
 msgctxt "field:import.csv.log,comment:"
 msgid "Comment"
 msgstr "Comentario"
@@ -137,6 +141,10 @@ msgstr "Identificador"
 msgctxt "field:import.csv.log,origin:"
 msgid "Origin"
 msgstr "Origen"
+
+msgctxt "field:import.csv.log,parent:"
+msgid "Parent"
+msgstr "Padre"
 
 msgctxt "field:import.csv.log,rec_name:"
 msgid "Name"
