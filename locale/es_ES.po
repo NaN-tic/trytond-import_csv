@@ -379,6 +379,14 @@ msgctxt "model:ir.action,name:act_profile_csv"
 msgid "Import CSV Profiles"
 msgstr "Perfiles de importación CSV"
 
+msgctxt "model:ir.action.act_window.domain,name:act_import_csv_logs_all"
+msgid "Alls"
+msgstr "Todos"
+
+msgctxt "model:ir.action.act_window.domain,name:act_import_csv_logs_roots"
+msgid "Parents"
+msgstr "Padres"
+
 msgctxt "model:ir.ui.menu,name:main_menu_import_csv"
 msgid "Import CSV Profiles"
 msgstr "Perfiles de importación CSV"
