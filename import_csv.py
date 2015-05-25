@@ -531,7 +531,7 @@ class ImportCSV(Wizard):
                     self.raise_user_error('csv_format_error')
                 value = column.get_value(value)
 
-                if not value and column.field_required():
+                if value is None and column.field_required():
                     log_value = {
                         'date_time': datetime.now(),
                         }
