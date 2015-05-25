@@ -332,7 +332,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         }
         try:
             exec self.search_record_code in localspace
-        except SyntaxError, e:
+        except (SyntaxError, TypeError) as e:
             logger.error('Syntax Error in mapping %s field.'
                 ' Error: %s' %
                 (self.field.name, e))
