@@ -255,6 +255,9 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                 error_args=(self.field.name))
         return value
 
+    def get_text(self, value):
+        return self.get_char(value)
+
     def get_integer(self, value):
         try:
             value = int(value)
