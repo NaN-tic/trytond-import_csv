@@ -210,7 +210,10 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     @classmethod
     def check_columns(cls, columns):
         for column in columns:
-            cells = column.column.split(',')
+            cells = column.column
+            if not cells:
+                continue
+            cells = cells.split(',')
             for cell in cells:
                 try:
                     int(cell)
