@@ -332,7 +332,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         }
         try:
             exec self.search_record_code in localspace
-        except (SyntaxError, TypeError) as e:
+        except (SyntaxError, KeyError) as e:
             logger.error('Syntax Error in mapping %s field.'
                 ' Error: %s' %
                 (self.field.name, e))
@@ -543,8 +543,8 @@ class ImportCSV(Wizard):
                     log_value['status'] = 'skipped'
                     log_values.append(log_value)
                     break
-                elif (column.profile_csv.exclude_row
-                        and eval(column.profile_csv.exclude_row)):
+                elif (column.profile_csv.match_expression
+                        and eval(column.profile_csv.match_expression)):
                     log_value = {
                         'date_time': datetime.now(),
                         }
