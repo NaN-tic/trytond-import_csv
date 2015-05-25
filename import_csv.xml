@@ -119,6 +119,22 @@ copyright notices and license terms. -->
             id="menu_import_import_csv"
             sequence="10"/>
 
+        <!-- import csv start -->
+        <record model="ir.ui.view" id="import_csv_start">
+            <field name="model">import.csv.start</field>
+            <field name="type">form</field>
+            <field name="name">import_csv_start_view_form</field>
+        </record>
+        <record model="ir.action.wizard" id="act_import_csv">
+            <field name="name">Import CSV</field>
+            <field name="wiz_name">import.csv</field>
+        </record>
+        <menuitem
+            name="Import CSV"
+            parent="main_menu_import_csv"
+            action="act_import_csv"
+            id="menu_import_csv"
+            sequence="10"/>
     </data>
 </tryton>
     

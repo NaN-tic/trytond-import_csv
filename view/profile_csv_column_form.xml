@@ -15,8 +15,11 @@ copyright notices and license terms. -->
     <field name="ttype"/>
     <label name="date_format"/>
     <field name="date_format"/>
-    <label name="profile_csv"/>
-    <field name="profile_csv"/>
+    <label name="add_to_domain"/>
+    <field name="add_to_domain"/>
     <label name="search_record_code" colspan="4" xalign="0.0"/>
     <field name="search_record_code" colspan="4"/>
+    <field name="selection" colspan="4"/>
+    <label name="profile_csv"/>
+    <field name="profile_csv"/>
 </form>

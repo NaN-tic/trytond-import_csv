@@ -7,10 +7,12 @@ from decimal import Decimal
 import logging
 from trytond.model import fields, ModelSQL, ModelView
 from trytond.pool import Pool
-from trytond.pyson import Eval, In, Not
+from trytond.pyson import Bool, Eval, In, Not
+from trytond.wizard import Button, StateTransition, StateView, Wizard
 
 
-__all__ = ['ProfileCSV', 'ProfileCSVColumn', 'ImportCSVLog']
+__all__ = ['ProfileCSV', 'ProfileCSVColumn', 'ImportCSVLog',
+    'ImportCSVStart', 'ImportCSV']
 
 
 class ProfileCSV(ModelSQL, ModelView):
@@ -140,6 +142,13 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             '  * pool: To make reference to the data base objects.\n'
             '  * value: The value of this field.\n'
             'You must assign the result to a variable called "result".')
+    add_to_domain = fields.Boolean('Add to Search Domain',
+        help='If checked, adds this field to domain for searching records in '
+            'order to avoid duplications.')
+    selection = fields.Text('Selection', states={
+            'invisible': Eval('ttype') != 'selection',
+            }, depends=['ttype'],
+        help='A couple of key and value separated by ":" per line')
 
     @classmethod
     def __setup__(cls):
@@ -406,3 +415,196 @@ class ImportCSVLog(ModelSQL, ModelView):
                 ('model', 'in', models),
                 ])
         return [(None, '')] + [(m.model, m.name) for m in models]
+
+
+class ImportCSVStart(ModelView):
+    'Import CSV start'
+    __name__ = 'import.csv.start'
+    profile_csv = fields.Many2One('profile.csv', 'CSV',
+        required=True)
+    import_file = fields.Binary('Import File', required=True)
+    header = fields.Boolean('Headers',
+        help='Set this check box to true if CSV file has headers.')
+    attachment = fields.Boolean('Attachment',
+        help='Attach CSV file after import.')
+    character_encoding = fields.Selection([
+            ('utf-8', 'UTF-8'),
+            ('latin-1', 'Latin-1'),
+            ], 'Character Encoding')
+    skip_repeated = fields.Boolean('Skip Repeated',
+        help='If any record of the csv file is already imported, skip it.')
+
+    @classmethod
+    def default_profile_csv(cls):
+        ProfileCSV = Pool().get('profile.csv')
+        profile_csvs = ProfileCSV.search([])
+        if len(profile_csvs) == 1:
+            return profile_csvs[0].id
+
+    @classmethod
+    def default_skip_repeated(cls):
+        return True
+
+    @classmethod
+    def default_attachment(cls):
+        return True
+
+    @classmethod
+    def default_character_encoding(cls):
+        ProfileCSV = Pool().get('profile.csv')
+        profile_csvs = ProfileCSV.search([])
+        if len(profile_csvs) == 1:
+            return profile_csvs[0].character_encoding
+        return 'utf-8'
+
+    @fields.depends('profile_csv')
+    def on_change_profile_csv(self):
+        changes = {}
+        if self.profile_csv:
+            changes['character_encoding'] = (
+                self.profile_csv.character_encoding)
+        return changes
+
+
+class ImportCSV(Wizard):
+    'Import CSV'
+    __name__ = 'import.csv'
+    start = StateView('import.csv.start', 'import_csv.import_csv_start', [
+            Button('Cancel', 'end', 'tryton-cancel'),
+            Button('Import File', 'import_file', 'tryton-ok', default=True),
+            ])
+    import_file = StateTransition()
+
+    @classmethod
+    def __setup__(cls):
+        super(ImportCSV, cls).__setup__()
+        cls._error_messages.update({
+                'general_failure': 'Please, check that the CSV file is '
+                    'effectively a CSV file.',
+                'csv_format_error': 'Please, check that the CSV file '
+                    'configuration matches with the format of the CSV file.',
+                'database_general_failure': 'Database general failure.\n'
+                    'Error raised: %s.',
+                'record_already_exists_error': 'Record %s skipped. '
+                    'Already exists.',
+                'record_already_has_lines':
+                    'You cannot import a CSV record because "%s" '
+                    'have lines.',
+                'record_not_draft':
+                    'You cannot import a CSV record because "%s" '
+                    'is not draft state.',
+                'required_field_null_error': 'Field %s is required but not '
+                    'value found in record %s. Record skipped!',
+                'skip_row_filter_error':
+                    'Row %s skipped by "Exclude Row" filter rule.',
+                })
+
+    def transition_import_file(self):
+        pool = Pool()
+        Attachment = pool.get('ir.attachment')
+
+        profile_csv = self.start.profile_csv
+        model = profile_csv.model
+        Model = pool.get(model.model)
+        import_file = self.start.import_file
+        has_header = self.start.header
+        has_attachment = self.start.attachment
+        skip_repeated = self.start.skip_repeated
+
+        data = profile_csv.read_csv_file(import_file)
+
+        if has_header:
+            next(data, None)
+
+        vlist = []
+        log_values = []
+        for row in list(data):
+            if not row:
+                continue
+            values = {}
+            domain = []
+            for column in profile_csv.columns:
+                cells = column.column.split(',')
+                try:
+                    value = ','.join(row[int(c)] for c in cells if c)
+                except IndexError:
+                    self.raise_user_error('csv_format_error')
+                value = column.get_value(value)
+
+                if not value and column.field_required():
+                    log_value = {
+                        'date_time': datetime.now(),
+                        }
+                    log_value['origin'] = 'profile.csv,%s' % profile_csv.id
+                    log_value['comment'] = self.raise_user_error(
+                        'required_field_null_error',
+                        error_args=(column.field.field_description, row),
+                        raise_exception=False)
+                    log_value['status'] = 'skipped'
+                    log_values.append(log_value)
+                    break
+                elif (column.profile_csv.exclude_row
+                        and eval(column.profile_csv.exclude_row)):
+                    log_value = {
+                        'date_time': datetime.now(),
+                        }
+                    log_value['origin'] = 'profile.csv,%s' % profile_csv.id
+                    log_value['comment'] = self.raise_user_error(
+                        'skip_row_filter_error',
+                        error_args=(row),
+                        raise_exception=False)
+                    log_value['status'] = 'skipped'
+                    log_values.append(log_value)
+                    break
+                values[column.field.name] = value
+
+                if column.field.name and column.add_to_domain:
+                    domain.append(
+                        (column.field.name, '=', values[column.field.name])
+                        )
+            else:
+                if skip_repeated and domain:
+                    records = Model.search(domain)
+                    if records:
+                        log_value = {
+                            'date_time': datetime.now(),
+                            }
+                        log_value['origin'] = 'profile.csv,%s' % profile_csv.id
+                        log_value['comment'] = self.raise_user_error(
+                            'record_already_exists_error',
+                            error_args=(records[0].rec_name,),
+                            raise_exception=False)
+                        log_value['status'] = 'skipped'
+                        log_values.append(log_value)
+                        continue
+
+                log_value = {
+                    'date_time': datetime.now(),
+                    }
+                log_value['origin'] = 'profile.csv,%s' % profile_csv.id
+                log_value['comment'] = ('Record %s added.' % (values))
+                log_value['status'] = 'done'
+                log_values.append(log_value)
+                vlist.append(values)
+        if vlist:
+            Model.create(vlist)
+
+        csv_log, = ImportCSVLog.create([{
+                'date_time': datetime.now(),
+                'origin': 'profile.csv,%s' % profile_csv.id,
+                'comment': '%s %s' % (profile_csv.name, datetime.now()),
+                'status': 'done',
+                'children': [
+                    ('create', log_values),
+                    ],
+                }])
+
+        if has_attachment:
+            attach = Attachment(
+                name=datetime.now().strftime("%y/%m/%d %H:%M:%S"),
+                type='data',
+                data=import_file,
+                resource=str(csv_log))
+            attach.save()
+
+        return 'end'

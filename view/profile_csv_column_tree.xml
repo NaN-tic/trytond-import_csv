@@ -8,5 +8,6 @@ copyright notices and license terms. -->
     <field name="column"/>
     <field name="constant"/>
     <field name="ttype"/>
+    <field name="add_to_domain"/>
     <field name="date_format"/>
 </tree>
