@@ -396,7 +396,7 @@ class ImportCSVLog(ModelSQL, ModelView):
     @staticmethod
     def _get_origin():
         'Return list of Model names for origin Reference'
-        return ['account.statement']
+        return ['profile.csv']
 
     @classmethod
     def get_origin(cls):
