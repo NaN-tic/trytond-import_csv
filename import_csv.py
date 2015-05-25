@@ -349,7 +349,10 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             error_args=(value))
 
     def get_value(self, value):
-        return getattr(self, 'get_%s' % self.ttype)(value)
+        if value:
+            return getattr(self, 'get_%s' % self.ttype)(value)
+        elif self.constant:
+            return getattr(self, 'get_%s' % self.ttype)(self.constant)
 
 
 class ImportCSVLog(ModelSQL, ModelView):
