@@ -222,6 +222,11 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                     error_args=(column.field.name,)
                         )
 
+    def field_required(self):
+        field = Pool().get(self.field.model.model)
+        return (field._fields[self.field.name].required
+            or field._fields[self.field.name].states.get('required', False))
+
     @fields.depends('field')
     def on_change_with_ttype(self, name=None):
         if self.field:
