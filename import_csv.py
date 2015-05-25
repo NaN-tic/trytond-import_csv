@@ -324,7 +324,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         return value
 
     def get_result(self, value):
-        logger = logging.getLogger('base_external_mapping')
+        logger = logging.getLogger('import_csv')
         localspace = {
             'self': self,
             'pool': Pool(),
