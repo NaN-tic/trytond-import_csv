@@ -342,7 +342,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
 
     def get_many2one(self, value):
         if self.search_record_code:
-            return self.get_result(value)
+            return self.get_result(value) or None
 
     def get_one2many(self, value):
         self.raise_user_error('not_implemented_error',
