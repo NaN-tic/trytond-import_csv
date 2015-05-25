@@ -5,8 +5,12 @@ copyright notices and license terms. -->
 <form string="Profile CSV Column">
     <label name="field"/>
     <field name="field"/>
-    <label name="column"/>
-    <field name="column"/>
+    <group id="values" colspan="2" col="4">
+        <label name="column"/>
+        <field name="column"/>
+        <label name="constant"/>
+        <field name="constant"/>
+    </group>
     <label name="ttype"/>
     <field name="ttype"/>
     <label name="date_format"/>

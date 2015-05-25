@@ -6,6 +6,7 @@ copyright notices and license terms. -->
     <field name="profile_csv"/>
     <field name="field"/>
     <field name="column"/>
+    <field name="constant"/>
     <field name="ttype"/>
     <field name="date_format"/>
 </tree>

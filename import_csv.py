@@ -100,9 +100,15 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     'Profile CSV Column'
     __name__ = 'profile.csv.column'
     profile_csv = fields.Many2One('profile.csv', 'Profile CSV', required=True)
-    column = fields.Char('Columns', required=True,
+    column = fields.Char('Columns', required=False, states={
+            'invisible': Bool(Eval('constant'))
+            },
         help='The position of the columns separated by commas corresponding '
         'to this field.')
+    constant = fields.Char('Constant', states={
+            'invisible': Bool(Eval('column'))
+            },
+        help='A constant value to set in this field.',)
     field = fields.Many2One('ir.model.field', 'Field',
         domain=[('model', '=', Eval('_parent_profile_csv', {}).get('model'))],
         select=True, required=True)
@@ -181,13 +187,25 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                     'Field: \'%s\'\n'
                     'Value: \'%s\'\n',
                 'not_implemented_error': 'This kind of field is not '
-                    'implemented yet.'
+                    'implemented yet.',
+                'column_and_constant_null_error': 'The "Columns" and '
+                    '"Constant" fields of line %s can not be empty at a time. '
+                    'Please fill at least one of them.',
                 })
 
     @classmethod
     def validate(cls, records):
         super(ProfileCSVColumn, cls).validate(records)
+        cls.check_sources(records)
         cls.check_columns(records)
+
+    @classmethod
+    def check_sources(cls, columns):
+        for column in columns:
+            if not column.column and not column.constant:
+                cls.raise_user_error('column_and_constant_null_error',
+                    error_args=(column.field.name,)
+                        )
 
     @classmethod
     def check_columns(cls, columns):
