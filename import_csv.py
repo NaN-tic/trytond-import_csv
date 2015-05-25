@@ -303,8 +303,16 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         return value
 
     def get_selection(self, value):
-        self.raise_user_error('not_implemented_error',
-            error_args=(value))
+        value = self.get_char(value)
+        map_values = self.selection or u''
+        if map_values:
+            for pair in map_values.splitlines():
+                if pair:
+                    key, map_value = pair.split(':')
+                    if key == value:
+                        value = map_value.strip()
+                        break
+        return value
 
     def get_result(self, value):
         logger = logging.getLogger('base_external_mapping')
