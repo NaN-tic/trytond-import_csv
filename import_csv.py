@@ -118,7 +118,8 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     date_format = fields.Char('Date Format',
         states={
             'invisible': Not(In(Eval('ttype'),
-                    ['datetime', 'date', 'timestamp', 'time', 'many2one'])),
+                    ['datetime', 'date', 'timestamp', 'time', 'many2one',
+                        'one2many', 'many2many'])),
             'required': In(Eval('ttype'),
                 ['datetime', 'date', 'timestamp', 'time']),
             },
@@ -134,7 +135,8 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'https://docs.python.org/2/library/datetime.html'
             '?highlight=datetime#strftime-and-strptime-behavior')
     search_record_code = fields.Text('Search Record Code', states={
-            'invisible': Eval('ttype') != 'many2one',
+            'invisible': Not(In(Eval('ttype'),
+                    ['many2one', 'one2many', 'many2many'])),
             },
         help='Type the python code for mapping this field.\n'
             'You can use:\n'
@@ -195,8 +197,6 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                     'the box on the wizard.\n\n'
                     'Field: \'%s\'\n'
                     'Value: \'%s\'\n',
-                'not_implemented_error': 'This kind of field is not '
-                    'implemented yet.',
                 'column_and_constant_null_error': 'The "Columns" and '
                     '"Constant" fields of line %s can not be empty at a time. '
                     'Please fill at least one of them.',
@@ -358,8 +358,12 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             return self.get_result(value) or None
 
     def get_one2many(self, value):
-        self.raise_user_error('not_implemented_error',
-            error_args=(value))
+        if self.search_record_code:
+            return self.get_result(value) or None
+
+    def get_many2many(self, value):
+        if self.search_record_code:
+            return self.get_result(value) or None
 
     def get_value(self, value):
         if value:
@@ -501,6 +505,8 @@ class ImportCSV(Wizard):
                     'value found in record %s. Record skipped!',
                 'skip_row_filter_error':
                     'Row %s skipped by "Exclude Row" filter rule.',
+                'not_implemented_error': 'This kind of domain is not '
+                    'implemented yet.',
                 })
 
     def transition_import_file(self):
@@ -563,9 +569,29 @@ class ImportCSV(Wizard):
                 values[column.field.name] = value
 
                 if column.field.name and column.add_to_domain:
-                    domain.append(
-                        (column.field.name, '=', values[column.field.name])
-                        )
+                    if column.ttype in ('one2many', 'many2many'):
+                        operator = 'in'
+                        if value[0][0] == 'add':
+                            value = value[0][1]
+                        elif value[0][0] == 'create':
+                            Relation = pool.get(column.field.relation)
+                            val = []
+                            for record in value[0][1]:
+                                dom = []
+                                for field in record:
+                                    dom.append((field, '=', record[field]))
+                                val += [r.id for r in Relation.search(dom)]
+                            value = val
+                        else:
+                            self.raise_user_error('not_implemented_error',
+                                raise_exception=True)
+                    else:
+                        operator = '='
+                    domain.append((
+                            column.field.name,
+                            operator,
+                            value
+                            ))
             else:
                 if skip_repeated and domain:
                     records = Model.search(domain)
