@@ -118,7 +118,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     date_format = fields.Char('Date Format',
         states={
             'invisible': Not(In(Eval('ttype'),
-                        ['datetime', 'date', 'timestamp', 'time'])),
+                    ['datetime', 'date', 'timestamp', 'time', 'many2one'])),
             'required': In(Eval('ttype'),
                         ['datetime', 'date', 'timestamp', 'time']),
             },
