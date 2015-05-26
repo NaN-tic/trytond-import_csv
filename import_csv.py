@@ -348,7 +348,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             return False
         except Exception, e:
             logger.error('Unknown Error in mapping %s field.'
-                '%s. Message: %s' %
+                ' Message: %s' %
                 (self.field.name, e))
             return False
         return localspace['result'] if 'result' in localspace else None
