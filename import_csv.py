@@ -342,6 +342,10 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                 ' Error: %s' %
                 (self.field.name, e))
             return False
+        except AssertionError:
+            logger.error('Assertion Error in mapping %s field.'
+                % self.field.name)
+            return False
         except Exception, e:
             logger.error('Unknown Error in mapping %s field.'
                 '%s. Message: %s' %
