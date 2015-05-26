@@ -120,7 +120,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'invisible': Not(In(Eval('ttype'),
                     ['datetime', 'date', 'timestamp', 'time', 'many2one'])),
             'required': In(Eval('ttype'),
-                        ['datetime', 'date', 'timestamp', 'time']),
+                ['datetime', 'date', 'timestamp', 'time']),
             },
         help='Set the csv format of the DateTime, Date or Timestamp data.\n\n'
             '%d: Day.\t\t\t\t%H: Hours.\n'
