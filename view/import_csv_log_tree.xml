@@ -2,7 +2,8 @@
 <!-- This file is part of import_csv module for Tryton.
 The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
-<tree string="Import CSV Logs">
+<tree string="Import CSV Logs"
+        colors="If(Equal(Eval('status'), 'skipped'), 'red', 'darkgreen')">
     <field name="origin" tree_invisible="1"/>
     <field name="date_time"/>
     <field name="status"/>
