@@ -231,6 +231,10 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                     error_args=(column.field.name,)
                         )
 
+    @staticmethod
+    def default_add_to_domain():
+        return True
+
     def field_required(self):
         field = Pool().get(self.field.model.model)
         return (field._fields[self.field.name].required
