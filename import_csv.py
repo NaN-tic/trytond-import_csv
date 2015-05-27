@@ -608,6 +608,17 @@ class ImportCSV(Wizard):
                         log_values.append(log_value)
                         continue
 
+                if skip_repeated:
+                    skip = len(vlist) != 0
+                    for vals in vlist:
+                        skip = True
+                        for field in values:
+                            skip &= vals[field] == values[field]
+                        if skip:
+                            break
+                    if skip:
+                        continue
+
                 log_value = {
                     'date_time': datetime.now(),
                     }
