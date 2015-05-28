@@ -142,7 +142,11 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'You can use:\n'
             '  * self: To make reference to this mapping record.\n'
             '  * pool: To make reference to the data base objects.\n'
-            '  * value: The value of this field.\n'
+            '  * values: List of values. There is one for each column selected'
+                ' on field "Columns". Useful when you want concatenate strings'
+                ' of various columns in one field, or when you want use more '
+                'than one value as a criteria to search in many2one or *2many '
+                'fields.\n'
             'You must assign the result to a variable called "result".')
     add_to_domain = fields.Boolean('Add to Search Domain',
         help='If checked, adds this field to domain for searching records in '
@@ -245,78 +249,89 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         if self.field:
             return self.field.ttype
 
-    def get_numeric(self, value):
-        thousands_separator = self.profile_csv.thousands_separator
-        decimal_separator = self.profile_csv.decimal_separator
-        if thousands_separator != 'none':
-            value = value.replace(thousands_separator, '')
-        if decimal_separator == ',':
-            value = value.replace(decimal_separator, '.')
-        try:
-            value = Decimal(value)
-        except:
-            self.raise_user_error('numeric_format_error',
-                error_args=(self.field.name, value))
-        return value
+    def get_numeric(self, values):
+        for value in values:
+            thousands_separator = self.profile_csv.thousands_separator
+            decimal_separator = self.profile_csv.decimal_separator
+            if thousands_separator != 'none':
+                value = value.replace(thousands_separator, '')
+            if decimal_separator == ',':
+                value = value.replace(decimal_separator, '.')
+            try:
+                value = Decimal(value)
+            except:
+                self.raise_user_error('numeric_format_error',
+                    error_args=(self.field.name, value))
+            return value
 
-    def get_char(self, value):
-        character_encoding = self.profile_csv.character_encoding
-        try:
-            value = value.decode(character_encoding)
-        except:
-            self.raise_user_error('char_encoding_error',
-                error_args=(self.field.name))
-        return value
+    def get_char(self, values):
+        result = ''
+        for value in values:
+            character_encoding = self.profile_csv.character_encoding
+            try:
+                value = value.decode(character_encoding)
+            except:
+                self.raise_user_error('char_encoding_error',
+                    error_args=(self.field.name))
+            if result:
+                result += ', ' + value
+            else:
+                result = value
+        return result
 
-    def get_text(self, value):
-        return self.get_char(value)
+    def get_text(self, values):
+        return self.get_char(values)
 
-    def get_integer(self, value):
-        try:
-            value = int(value)
-        except:
-            self.raise_user_error('integer_format_error',
-                error_args=(self.field.name, value))
-        if value < -2147483648 or value > 2147483647:
-            self.raise_user_error('integer_too_big_error',
-                error_args=(self.field.name, value))
-        return value
+    def get_integer(self, values):
+        for value in values:
+            try:
+                value = int(value)
+            except:
+                self.raise_user_error('integer_format_error',
+                    error_args=(self.field.name, value))
+            if value < -2147483648 or value > 2147483647:
+                self.raise_user_error('integer_too_big_error',
+                    error_args=(self.field.name, value))
+            return value
 
-    def get_datetime(self, value):
-        date_format = self.date_format
-        try:
-            value = datetime.strptime(value, date_format)
-        except ValueError:
-            self.raise_user_error('datetime_format_error',
-                error_args=(self.field.name, value, date_format))
-        return value
+    def get_datetime(self, values):
+        for value in values:
+            date_format = self.date_format
+            try:
+                value = datetime.strptime(value, date_format)
+            except ValueError:
+                self.raise_user_error('datetime_format_error',
+                    error_args=(self.field.name, value, date_format))
+            return value
 
-    def get_date(self, value):
-        value = self.get_datetime(value)
+    def get_date(self, values):
+        value = self.get_datetime(values)
         return date(value.year, value.month, value.day)
 
-    def get_time(self, value):
-        date_format = self.date_format
-        try:
-            value = time.strptime(value, date_format)
-        except ValueError:
-            self.raise_user_error('datetime_format_error',
-                error_args=(self.field.name, value, date_format))
-        return value
+    def get_time(self, values):
+        for value in values:
+            date_format = self.date_format
+            try:
+                value = time.strptime(value, date_format)
+            except ValueError:
+                self.raise_user_error('datetime_format_error',
+                    error_args=(self.field.name, value, date_format))
+            return value
 
-    def get_timestamp(self, value):
-        return self.get_datetime(value)
+    def get_timestamp(self, values):
+        return self.get_datetime(values)
 
-    def get_boolean(self, value):
-        try:
-            value = bool(value)
-        except:
-            self.raise_user_error('boolean_format_error',
-                error_args=(self.field.name, value))
-        return value
+    def get_boolean(self, values):
+        for value in values:
+            try:
+                value = bool(value)
+            except:
+                self.raise_user_error('boolean_format_error',
+                    error_args=(self.field.name, value))
+            return value
 
-    def get_selection(self, value):
-        value = self.get_char(value)
+    def get_selection(self, values):
+        value = self.get_char([values[0]])
         map_values = self.selection or u''
         if map_values:
             for pair in map_values.splitlines():
@@ -327,12 +342,12 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                         break
         return value
 
-    def get_result(self, value):
+    def get_result(self, values):
         logger = logging.getLogger('import_csv')
         localspace = {
             'self': self,
             'pool': Pool(),
-            'value': value,
+            'values': values,
         }
         try:
             exec self.search_record_code in localspace
@@ -357,23 +372,23 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             return False
         return localspace['result'] if 'result' in localspace else None
 
-    def get_many2one(self, value):
+    def get_many2one(self, values):
         if self.search_record_code:
-            return self.get_result(value) or None
+            return self.get_result(values) or None
 
-    def get_one2many(self, value):
+    def get_one2many(self, values):
         if self.search_record_code:
-            return self.get_result(value) or None
+            return self.get_result(values) or None
 
-    def get_many2many(self, value):
+    def get_many2many(self, values):
         if self.search_record_code:
-            return self.get_result(value) or None
+            return self.get_result(values) or None
 
-    def get_value(self, value):
-        if value:
-            return getattr(self, 'get_%s' % self.ttype)(value)
+    def get_value(self, values):
+        if values and values[0]:
+            return getattr(self, 'get_%s' % self.ttype)(values)
         elif self.constant:
-            return getattr(self, 'get_%s' % self.ttype)(self.constant)
+            return getattr(self, 'get_%s' % self.ttype)([self.constant])
 
 
 class ImportCSVLog(ModelSQL, ModelView):
@@ -540,10 +555,10 @@ class ImportCSV(Wizard):
             for column in profile_csv.columns:
                 cells = column.column.split(',')
                 try:
-                    value = ','.join(row[int(c)] for c in cells if c)
+                    vals = [row[int(c)] for c in cells if c]
                 except IndexError:
                     self.raise_user_error('csv_format_error')
-                value = column.get_value(value)
+                value = column.get_value(vals)
 
                 if value is None and column.field_required():
                     log_value = {
