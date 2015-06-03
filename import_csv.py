@@ -33,7 +33,8 @@ class ProfileCSV(ModelSQL, ModelView):
         help='Character to use as quote')
     match_expression = fields.Char('Match Expression',
         help='Eval Python expresion to skip some CSV lines. Example:\n'
-            'row[5] == "Cancelled" and row[11] == "user@domain.com"')
+            'row[5] == "Cancelled" and row[11] == "user@domain.com"\n'
+            'Will exclude all rows matching this criteria.')
     active = fields.Boolean('Active')
     character_encoding = fields.Selection([
             ('utf-8', 'UTF-8'),
