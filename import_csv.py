@@ -391,6 +391,15 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         elif self.constant:
             return getattr(self, 'get_%s' % self.ttype)([self.constant])
 
+    def get_field_value(self, **kvargs):
+        Model = Pool().get(self.profile_csv.model.model)
+        kvargs['field'] = self.field.name
+        kvargs['csv_column'] = self
+        get_field_value = getattr(Model, 'get_field_value')
+        if not get_field_value:
+            self.raise_user_error('not_implemented_error')
+        return get_field_value(**kvargs)
+
 
 class ImportCSVLog(ModelSQL, ModelView):
     'Import CSV Log'
