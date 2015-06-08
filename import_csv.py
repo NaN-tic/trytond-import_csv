@@ -536,6 +536,8 @@ class ImportCSV(Wizard):
                     'Row %s skipped by "Exclude Row" filter rule.',
                 'not_implemented_error': 'This kind of domain is not '
                     'implemented yet.',
+                'match_expression_error': 'Error in Match Expression Domain. '
+                    'Error raised: %s',
                 })
 
     def transition_import_file(self):
@@ -582,19 +584,33 @@ class ImportCSV(Wizard):
                     log_value['status'] = 'skipped'
                     log_values.append(log_value)
                     break
-                elif (column.profile_csv.match_expression
-                        and eval(column.profile_csv.match_expression)):
-                    log_value = {
-                        'date_time': datetime.now(),
-                        }
-                    log_value['origin'] = 'profile.csv,%s' % profile_csv.id
-                    log_value['comment'] = self.raise_user_error(
-                        'skip_row_filter_error',
-                        error_args=(row),
-                        raise_exception=False)
-                    log_value['status'] = 'skipped'
-                    log_values.append(log_value)
-                    break
+                elif column.profile_csv.match_expression:
+                    try:
+                        match = eval(column.profile_csv.match_expression)
+                    except (NameError, TypeError) as e:
+                        log_value = {
+                            'date_time': datetime.now(),
+                            }
+                        log_value['origin'] = 'profile.csv,%s' % profile_csv.id
+                        log_value['comment'] = self.raise_user_error(
+                            'match_expression_error',
+                            error_args=(e,),
+                            raise_exception=False)
+                        log_value['status'] = 'skipped'
+                        log_values.append(log_value)
+                        break
+                    if match:
+                        log_value = {
+                            'date_time': datetime.now(),
+                            }
+                        log_value['origin'] = 'profile.csv,%s' % profile_csv.id
+                        log_value['comment'] = self.raise_user_error(
+                            'skip_row_filter_error',
+                            error_args=(row),
+                            raise_exception=False)
+                        log_value['status'] = 'skipped'
+                        log_values.append(log_value)
+                        break
                 values[column.field.name] = value
 
                 if column.field.name and column.add_to_domain:
