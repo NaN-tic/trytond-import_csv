@@ -596,7 +596,7 @@ class ImportCSV(Wizard):
                 elif column.profile_csv.match_expression:
                     try:
                         match = eval(column.profile_csv.match_expression)
-                    except (NameError, TypeError) as e:
+                    except (NameError, TypeError, IndexError) as e:
                         log_value = {
                             'date_time': datetime.now(),
                             }
