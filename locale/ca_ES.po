@@ -13,7 +13,7 @@ msgstr ""
 msgctxt "error:import.csv:"
 msgid "Field %s is required but not value found in record %s. Record skipped!"
 msgstr ""
-"El camp% s és requerit però no s'ha trobat cap valor al registre% s. "
+"El camp %s és requerit però no s'ha trobat cap valor al registre %s. "
 "Registre omès!"
 
 msgctxt "error:import.csv:"
