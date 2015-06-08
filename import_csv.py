@@ -250,8 +250,17 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         if self.field:
             return self.field.ttype
 
+    @property
+    def digits(self):
+        digits = 4
+        if self.field.ttype in ('float', 'numeric'):
+            Model = Pool().get(self.field.model.model)
+            digits = Model._fields.get(self.field.name).digits[1]
+        return digits
+
     def get_numeric(self, values):
         for value in values:
+            quantize = Decimal(10) ** -Decimal(self.digits)
             thousands_separator = self.profile_csv.thousands_separator
             decimal_separator = self.profile_csv.decimal_separator
             if thousands_separator != 'none':
@@ -259,7 +268,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             if decimal_separator == ',':
                 value = value.replace(decimal_separator, '.')
             try:
-                value = Decimal(value)
+                value = Decimal(value).quantize(quantize)
             except:
                 self.raise_user_error('numeric_format_error',
                     error_args=(self.field.name, value))
