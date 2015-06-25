@@ -7,7 +7,8 @@ from decimal import Decimal
 import logging
 from trytond.model import fields, ModelSQL, ModelView
 from trytond.pool import Pool
-from trytond.pyson import Bool, Eval, In, Not
+from trytond.pyson import Bool, Eval, In, Not, PYSON, PYSONEncoder, \
+    PYSONDecoder
 from trytond.wizard import Button, StateTransition, StateView, Wizard
 
 
@@ -256,6 +257,8 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         if self.field.ttype in ('float', 'numeric'):
             Model = Pool().get(self.field.model.model)
             digits = Model._fields.get(self.field.name).digits[1]
+            if isinstance(digits, PYSON):
+                digits = PYSONDecoder().decode(PYSONEncoder().encode(digits))
         return digits
 
     def get_numeric(self, values):
