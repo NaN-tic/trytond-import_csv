@@ -6,7 +6,7 @@ copyright notices and license terms. -->
     <data>
         <menuitem
             parent="ir.menu_administration"
-            name="Import CSV Profiles"
+            name="Import CSV"
             id="main_menu_import_csv"/>
 
         <!-- groups -->

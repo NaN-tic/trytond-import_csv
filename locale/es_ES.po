@@ -517,8 +517,8 @@ msgid "Parents"
 msgstr "Padres"
 
 msgctxt "model:ir.ui.menu,name:main_menu_import_csv"
-msgid "Import CSV Profiles"
-msgstr "Perfiles de importación CSV"
+msgid "Import CSV"
+msgstr "Importación CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_import_csv"
 msgid "Import CSV"
