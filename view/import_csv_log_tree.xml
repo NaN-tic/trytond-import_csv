@@ -5,7 +5,8 @@ copyright notices and license terms. -->
 <tree string="Import CSV Logs"
         colors="If(Equal(Eval('status'), 'skipped'), 'red', 'darkgreen')">
     <field name="origin" tree_invisible="1"/>
-    <field name="date_time"/>
+    <field name="date_time" widget="date"/>
+    <field name="date_time" widget="time" string="Time"/>
     <field name="status"/>
     <field name="comment"/>
 </tree>
