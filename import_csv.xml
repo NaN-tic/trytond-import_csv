@@ -78,7 +78,9 @@ copyright notices and license terms. -->
         <record model="ir.action.act_window" id="act_imported_csv_logs">
             <field name="name">Import CSV Logs</field>
             <field name="res_model">import.csv.log</field>
-            <field name="domain">[('origin', '=', (Eval('active_model'),Eval('active_id')))]</field>
+            <field name="domain"
+                eval="[('origin', '=', Eval('active_model'),Eval('active_id'))]"
+                pyson="1"/>
         </record>
         <record model="ir.action.act_window" id="act_import_csv_logs">
             <field name="name">Import CSV Logs</field>
@@ -99,7 +101,9 @@ copyright notices and license terms. -->
                 id="act_import_csv_logs_roots">
             <field name="name">Parents</field>
             <field name="sequence" eval="10"/>
-            <field name="domain">[('parent', '=', None)]</field>
+            <field name="domain"
+                eval="[('parent', '=', None)]"
+                pyson="1"/>
             <field name="act_window" ref="act_import_csv_logs"/>
         </record>
         <record model="ir.action.act_window.domain"
