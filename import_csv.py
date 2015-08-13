@@ -15,6 +15,8 @@ from trytond.wizard import Button, StateTransition, StateView, Wizard
 __all__ = ['ProfileCSV', 'ProfileCSVColumn', 'ImportCSVLog',
     'ImportCSVStart', 'ImportCSV']
 
+logger = logging.getLogger(__name__)
+
 
 class ProfileCSV(ModelSQL, ModelView):
     'Profile CSV'
@@ -360,7 +362,6 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         return value
 
     def get_result(self, values):
-        logger = logging.getLogger('import_csv')
         localspace = {
             'self': self,
             'pool': Pool(),
