@@ -7,8 +7,8 @@ from decimal import Decimal
 import logging
 from trytond.model import fields, ModelSQL, ModelView
 from trytond.pool import Pool
-from trytond.pyson import Bool, Eval, In, Not, PYSON, PYSONEncoder, \
-    PYSONDecoder
+from trytond.pyson import Bool, Eval, In, Not, If, Equal, \
+    PYSON, PYSONEncoder, PYSONDecoder
 from trytond.wizard import Button, StateTransition, StateView, Wizard
 
 
@@ -469,6 +469,11 @@ class ImportCSVLog(ModelSQL, ModelView):
                 ('model', 'in', models),
                 ])
         return [(None, '')] + [(m.model, m.name) for m in models]
+
+    @classmethod
+    def view_attributes(cls):
+        return [('/tree', 'colors',
+                If(Equal(Eval('status'), 'skipped'), 'red', 'darkgreen'))]
 
 
 class ImportCSVStart(ModelView):
