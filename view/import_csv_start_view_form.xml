@@ -14,4 +14,6 @@ copyright notices and license terms. -->
     <field name="character_encoding"/>
     <label name="skip_repeated"/>
     <field name="skip_repeated"/>
+    <label name="update_record"/>
+    <field name="update_record"/>
 </form>

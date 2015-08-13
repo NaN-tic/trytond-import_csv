@@ -249,9 +249,9 @@ msgctxt "field:profile.csv,character_encoding:"
 msgid "Character Encoding"
 msgstr "Codificació de caràcters"
 
-msgctxt "field:profile.csv,columns:"
-msgid "Columns"
-msgstr "Columnes"
+msgctxt "field:profile.csv,column:"
+msgid "Column"
+msgstr "Columna"
 
 msgctxt "field:profile.csv,create_date:"
 msgid "Create Date"
@@ -485,7 +485,7 @@ msgstr "Un parell clau valor separat per \":\" per línia"
 
 msgctxt "model:import.csv.log,name:"
 msgid "Import CSV Log"
-msgstr "Registre d'importació CSV"
+msgstr "Logs d'importació CSV"
 
 msgctxt "model:import.csv.start,name:"
 msgid "Import CSV start"
@@ -497,11 +497,11 @@ msgstr "Importar CSV"
 
 msgctxt "model:ir.action,name:act_import_csv_logs"
 msgid "Import CSV Logs"
-msgstr "Registres d'importació CSV"
+msgstr "Logs importació CSV"
 
 msgctxt "model:ir.action,name:act_imported_csv_logs"
 msgid "Import CSV Logs"
-msgstr "Registres d'importació CSV"
+msgstr "Logs importació CSV"
 
 msgctxt "model:ir.action,name:act_profile_csv"
 msgid "Import CSV Profiles"
@@ -525,7 +525,7 @@ msgstr "Importar CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_import_import_csv"
 msgid "Import CSV Logs"
-msgstr "Registres d'importació CSV"
+msgstr "Logs d'importació CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_import_profile_csvs"
 msgid "Import CSV Profiles"
@@ -609,7 +609,7 @@ msgstr "Altres"
 
 msgctxt "view:import.csv.log:"
 msgid "Import CSV Logs"
-msgstr "Registres d'importació CSV"
+msgstr "Logs d'importació CSV"
 
 msgctxt "view:import.csv.start:"
 msgid "Import CSV File"

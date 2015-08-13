@@ -3,5 +3,6 @@
 copyright notices and license terms. -->
 <tree string="CSV Profiles">
     <field name="name"/>
+    <field name="model"/>
     <field name="active" tree_invisible="1"/>
 </tree>

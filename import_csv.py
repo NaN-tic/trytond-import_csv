@@ -67,7 +67,7 @@ class ProfileCSV(ModelSQL, ModelView):
 
     @staticmethod
     def default_separator():
-        return ";"
+        return ","
 
     @staticmethod
     def default_quote():
@@ -104,7 +104,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     'Profile CSV Column'
     __name__ = 'profile.csv.column'
     profile_csv = fields.Many2One('profile.csv', 'Profile CSV', required=True)
-    column = fields.Char('Columns', required=False, states={
+    column = fields.Char('Column', required=False, states={
             'invisible': Bool(Eval('constant'))
             },
         help='The position of the columns separated by commas corresponding '
@@ -161,6 +161,10 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(ProfileCSVColumn, cls).__setup__()
+        cls._order = [
+            ('column', 'ASC'),
+            ('id', 'DESC'),
+            ]
         cls._error_messages.update({
                 'columns_must_be_integers':
                     'Columns on field \'%s\' must be integers separated by '
@@ -481,7 +485,10 @@ class ImportCSVStart(ModelView):
             ('latin-1', 'Latin-1'),
             ], 'Character Encoding')
     skip_repeated = fields.Boolean('Skip Repeated',
-        help='If any record of the csv file is already imported, skip it.')
+        help='If any record of the CSV file is already imported, skip it.')
+    update_record = fields.Boolean('Update Record',
+        help='If any record of the CSV file is already found with search domain, '
+            'update records.')
 
     @classmethod
     def default_profile_csv(cls):
@@ -492,10 +499,6 @@ class ImportCSVStart(ModelView):
 
     @classmethod
     def default_skip_repeated(cls):
-        return True
-
-    @classmethod
-    def default_attachment(cls):
         return True
 
     @classmethod
@@ -563,13 +566,15 @@ class ImportCSV(Wizard):
         has_header = self.start.header
         has_attachment = self.start.attachment
         skip_repeated = self.start.skip_repeated
+        update_record = self.start.update_record
 
         data = profile_csv.read_csv_file(import_file)
 
         if has_header:
             next(data, None)
 
-        vlist = []
+        to_create = []
+        to_update = []
         log_values = []
         for row in list(data):
             if not row:
@@ -650,31 +655,31 @@ class ImportCSV(Wizard):
                             value
                             ))
             else:
-                if skip_repeated and domain:
+                if domain:
                     records = Model.search(domain)
-                    if records:
-                        log_value = {
-                            'date_time': datetime.now(),
-                            }
-                        log_value['origin'] = 'profile.csv,%s' % profile_csv.id
-                        log_value['comment'] = self.raise_user_error(
-                            'record_already_exists_error',
-                            error_args=(records[0].rec_name,),
-                            raise_exception=False)
-                        log_value['status'] = 'skipped'
-                        log_values.append(log_value)
-                        continue
 
-                if skip_repeated:
-                    skip = len(vlist) != 0
-                    for vals in vlist:
-                        skip = True
-                        for field in values:
-                            skip &= vals[field] == values[field]
-                        if skip:
-                            break
-                    if skip:
-                        continue
+                    if update_record and records:
+                        to_update.append({
+                            'records': records,
+                            'values': values,
+                            })
+                    else:
+                        if skip_repeated and records:
+                            log_value = {
+                                'date_time': datetime.now(),
+                                }
+                            log_value['origin'] = 'profile.csv,%s' % profile_csv.id
+                            log_value['comment'] = self.raise_user_error(
+                                'record_already_exists_error',
+                                error_args=(records[0].rec_name,),
+                                raise_exception=False)
+                            log_value['status'] = 'skipped'
+                            log_values.append(log_value)
+                            continue
+                        else:
+                            to_create.append(values)
+                else:
+                    to_create.append(values)
 
                 log_value = {
                     'date_time': datetime.now(),
@@ -683,9 +688,13 @@ class ImportCSV(Wizard):
                 log_value['comment'] = ('Record %s added.' % (values))
                 log_value['status'] = 'done'
                 log_values.append(log_value)
-                vlist.append(values)
-        if vlist:
-            Model.create(vlist)
+
+        if to_create:
+            Model.create(to_create)
+            
+        if to_update:
+            for update in to_update:
+                Model.write(update['records'], update['values'])
 
         csv_log, = ImportCSVLog.create([{
                 'date_time': datetime.now(),
