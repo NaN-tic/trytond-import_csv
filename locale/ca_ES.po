@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -9,6 +9,10 @@ msgid ""
 msgstr ""
 "Error general a la base de dades.\n"
 "Error: %s."
+
+msgctxt "error:import.csv:"
+msgid "Error in Match Expression Domain. Error raised: %s"
+msgstr "Error en el domini de la expressió. L'error és: %s"
 
 msgctxt "error:import.csv:"
 msgid "Field %s is required but not value found in record %s. Record skipped!"
@@ -241,6 +245,10 @@ msgctxt "field:import.csv.start,skip_repeated:"
 msgid "Skip Repeated"
 msgstr "Omet repetits"
 
+msgctxt "field:import.csv.start,update_record:"
+msgid "Update Record"
+msgstr "Actualitza registre"
+
 msgctxt "field:profile.csv,active:"
 msgid "Active"
 msgstr "Actiu"
@@ -249,9 +257,9 @@ msgctxt "field:profile.csv,character_encoding:"
 msgid "Character Encoding"
 msgstr "Codificació de caràcters"
 
-msgctxt "field:profile.csv,column:"
-msgid "Column"
-msgstr "Columna"
+msgctxt "field:profile.csv,columns:"
+msgid "Columns"
+msgstr "Columnes"
 
 msgctxt "field:profile.csv,create_date:"
 msgid "Create Date"
@@ -314,8 +322,8 @@ msgid "Add to Search Domain"
 msgstr "Afegeix al domini de cerca"
 
 msgctxt "field:profile.csv.column,column:"
-msgid "Columns"
-msgstr "Columnes"
+msgid "Column"
+msgstr "Columna"
 
 msgctxt "field:profile.csv.column,constant:"
 msgid "Constant"
@@ -378,8 +386,16 @@ msgid "Set this check box to true if CSV file has headers."
 msgstr "Marqueu aquesta casella si l'arxiu CSV té capçaleres."
 
 msgctxt "help:import.csv.start,skip_repeated:"
-msgid "If any record of the csv file is already imported, skip it."
-msgstr "Si algun registre del fitxer csv ja s'ha importat, omet-lo."
+msgid "If any record of the CSV file is already imported, skip it."
+msgstr "Si algun registre del fitxer CSV ja s'ha importat, omet-lo."
+
+msgctxt "help:import.csv.start,update_record:"
+msgid ""
+"If any record of the CSV file is already found with search domain, update "
+"records."
+msgstr ""
+"Si hi ha registres del CSV que es troben en la cerca del domini, "
+"s'actualitzaran."
 
 msgctxt "help:profile.csv,decimal_separator:"
 msgid "If there are a number the decimal separator used"
@@ -524,8 +540,8 @@ msgid "Import CSV"
 msgstr "Importar CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_import_import_csv"
-msgid "Import CSV Logs"
-msgstr "Logs d'importació CSV"
+msgid "Logs"
+msgstr "Logs"
 
 msgctxt "model:ir.ui.menu,name:menu_import_profile_csvs"
 msgid "Import CSV Profiles"
@@ -636,13 +652,5 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 msgctxt "wizard_button:import.csv,start,import_file:"
-msgid "Import File"
-msgstr "Importa arxiu"
-
-msgctxt "wizard_button:import.csvs,start,end:"
-msgid "Cancel"
-msgstr "Cancel·la"
-
-msgctxt "wizard_button:import.csvs,start,import_file:"
 msgid "Import File"
 msgstr "Importa arxiu"
