@@ -609,7 +609,7 @@ msgstr "|"
 
 msgctxt "selection:profile.csv,thousands_separator:"
 msgid ""
-msgstr " "
+msgstr ""
 
 msgctxt "selection:profile.csv,thousands_separator:"
 msgid "Comma (,)"
