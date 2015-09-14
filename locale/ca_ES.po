@@ -1,4 +1,4 @@
-#
+# 
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -191,7 +191,7 @@ msgstr "Data i hora"
 
 msgctxt "field:import.csv.log,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:import.csv.log,origin:"
 msgid "Origin"
@@ -231,7 +231,7 @@ msgstr "Capçaleres"
 
 msgctxt "field:import.csv.start,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:import.csv.start,import_file:"
 msgid "Import File"
@@ -279,7 +279,7 @@ msgstr "Capçalera"
 
 msgctxt "field:profile.csv,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:profile.csv,match_expression:"
 msgid "Match Expression"
@@ -347,7 +347,7 @@ msgstr "Camp"
 
 msgctxt "field:profile.csv.column,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:profile.csv.column,profile_csv:"
 msgid "Profile CSV"
@@ -626,6 +626,10 @@ msgstr "Altres"
 msgctxt "view:import.csv.log:"
 msgid "Import CSV Logs"
 msgstr "Logs d'importació CSV"
+
+msgctxt "view:import.csv.log:"
+msgid "Time"
+msgstr "Hora"
 
 msgctxt "view:import.csv.start:"
 msgid "Import CSV File"

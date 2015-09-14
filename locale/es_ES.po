@@ -1,4 +1,4 @@
-#
+# 
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -192,7 +192,7 @@ msgstr "Fecha y hora"
 
 msgctxt "field:import.csv.log,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:import.csv.log,origin:"
 msgid "Origin"
@@ -232,7 +232,7 @@ msgstr "Cabeceras"
 
 msgctxt "field:import.csv.start,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:import.csv.start,import_file:"
 msgid "Import File"
@@ -280,7 +280,7 @@ msgstr "Cabecera"
 
 msgctxt "field:profile.csv,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:profile.csv,match_expression:"
 msgid "Match Expression"
@@ -348,7 +348,7 @@ msgstr "Campo"
 
 msgctxt "field:profile.csv.column,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:profile.csv.column,profile_csv:"
 msgid "Profile CSV"
@@ -627,6 +627,10 @@ msgstr "Otros"
 msgctxt "view:import.csv.log:"
 msgid "Import CSV Logs"
 msgstr "Logs de importación CSV"
+
+msgctxt "view:import.csv.log:"
+msgid "Time"
+msgstr "Hora"
 
 msgctxt "view:import.csv.start:"
 msgid "Import CSV File"
