@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from io import StringIO
+from io import BytesIO
 from csv import reader
 from datetime import datetime, date, time
 from decimal import Decimal
@@ -94,7 +94,7 @@ class ProfileCSV(ModelSQL, ModelView):
             separator = '\t'
         quote = self.quote
 
-        data = StringIO(archive)
+        data = BytesIO(archive)
         if quote:
             rows = reader(data, delimiter=str(separator), quotechar=str(quote))
         else:
@@ -695,7 +695,7 @@ class ImportCSV(Wizard):
 
         if to_create:
             Model.create(to_create)
-            
+
         if to_update:
             for update in to_update:
                 Model.write(update['records'], update['values'])
