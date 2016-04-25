@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full 
+copyright notices and license terms. -->
+<tree string="Import CSV File">
+    <field name="profile_csv"/>
+    <field name="csv_file"/>
+    <field name="skip_repeated"/>
+    <field name="update_record"/>
+    <field name="state"/>
+</tree>

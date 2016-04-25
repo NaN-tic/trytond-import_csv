@@ -62,84 +62,36 @@ copyright notices and license terms. -->
             <field name="name">profile_csv_column_form</field>
         </record>
 
-        <!-- import.csv.log -->
-        <record model="ir.ui.view" id="import_csv_log_tree_view">
-            <field name="model">import.csv.log</field>
+        <!-- import csv file -->
+        <record model="ir.ui.view" id="import_csv_file_tree_view">
+            <field name="model">import.csv.file</field>
             <field name="type">tree</field>
-            <field name="priority" eval="30"/>
-            <field name="name">import_csv_log_tree</field>
+            <field name="name">import_csv_file_tree</field>
         </record>
-        <record model="ir.ui.view" id="import_csv_log_form_view">
-            <field name="model">import.csv.log</field>
+        <record model="ir.ui.view" id="import_csv_file_form_view">
+            <field name="model">import.csv.file</field>
             <field name="type">form</field>
-            <field name="priority" eval="30"/>
-            <field name="name">import_csv_log_form</field>
+            <field name="name">import_csv_file_form</field>
         </record>
-        <record model="ir.action.act_window" id="act_imported_csv_logs">
-            <field name="name">Import CSV Logs</field>
-            <field name="res_model">import.csv.log</field>
-            <field name="domain"
-                eval="[('origin', '=', Eval('active_model'),Eval('active_id'))]"
-                pyson="1"/>
+        <record model="ir.action.act_window" id="act_import_csv_file">
+            <field name="name">Import CSV Files</field>
+            <field name="res_model">import.csv.file</field>
         </record>
-        <record model="ir.action.act_window" id="act_import_csv_logs">
-            <field name="name">Import CSV Logs</field>
-            <field name="res_model">import.csv.log</field>
-            <field name="domain"></field>
-        </record>
-        <record model="ir.action.act_window.view" id="act_import_csv_logs_tree">
+        <record model="ir.action.act_window.view" id="act_import_csv_file_tree">
             <field name="sequence" eval="10"/>
-            <field name="view" ref="import_csv_log_tree_view"/>
-            <field name="act_window" ref="act_import_csv_logs"/>
+            <field name="view" ref="import_csv_file_tree_view"/>
+            <field name="act_window" ref="act_import_csv_file"/>
         </record>
-        <record model="ir.action.act_window.view" id="act_import_csv_logs_form">
-            <field name="sequence" eval="10"/>
-            <field name="view" ref="import_csv_log_form_view"/>
-            <field name="act_window" ref="act_import_csv_logs"/>
-        </record>
-        <record model="ir.action.act_window.domain"
-                id="act_import_csv_logs_roots">
-            <field name="name">Parents</field>
-            <field name="sequence" eval="10"/>
-            <field name="domain"
-                eval="[('parent', '=', None)]"
-                pyson="1"/>
-            <field name="act_window" ref="act_import_csv_logs"/>
-        </record>
-        <record model="ir.action.act_window.domain"
-                id="act_import_csv_logs_all">
-            <field name="name">Alls</field>
+        <record model="ir.action.act_window.view" id="act_import_csv_file_form">
             <field name="sequence" eval="20"/>
-            <field name="act_window" ref="act_import_csv_logs"/>
-        </record>
-        <record model="ir.action-res.group"
-                id="act_imported_csv_logs-group_import_csv_user">
-            <field name="action" ref="act_imported_csv_logs"/>
-            <field name="group" ref="group_import_csv_user"/>
+            <field name="view" ref="import_csv_file_form_view"/>
+            <field name="act_window" ref="act_import_csv_file"/>
         </record>
         <menuitem
+            name="Import CSV Files"
             parent="main_menu_import_csv"
-            action="act_import_csv_logs"
-            id="menu_import_import_csv"
-            name="Logs"
-            sequence="10"/>
-
-        <!-- import csv start -->
-        <record model="ir.ui.view" id="import_csv_start">
-            <field name="model">import.csv.start</field>
-            <field name="type">form</field>
-            <field name="name">import_csv_start_view_form</field>
-        </record>
-        <record model="ir.action.wizard" id="act_import_csv">
-            <field name="name">Import CSV</field>
-            <field name="wiz_name">import.csv</field>
-        </record>
-        <menuitem
-            name="Import CSV"
-            parent="main_menu_import_csv"
-            action="act_import_csv"
-            id="menu_import_csv"
-            sequence="10"/>
+            action="act_import_csv_file"
+            id="menu_import_csv_file"/>
     </data>
 </tryton>
     

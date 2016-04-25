@@ -8,9 +8,5 @@ def register():
     Pool.register(
         ProfileCSV,
         ProfileCSVColumn,
-        ImportCSVLog,
-        ImportCSVStart,
+        ImportCSVFile,
         module='import_csv', type_='model')
-    Pool.register(
-        ImportCSV,
-        module='import_csv', type_='wizard')

@@ -1,19 +1,23 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+from email.header import Header
+from email.mime.text import MIMEText
 from io import BytesIO
 from csv import reader
 from datetime import datetime, date, time
 from decimal import Decimal
 import logging
+from trytond.config import config
 from trytond.model import fields, ModelSQL, ModelView
 from trytond.pool import Pool
-from trytond.pyson import Bool, Eval, In, Not, If, Equal, \
-    PYSON, PYSONEncoder, PYSONDecoder
-from trytond.wizard import Button, StateTransition, StateView, Wizard
+from trytond.pyson import Bool, Eval, In, Not
+from trytond.pyson import PYSON, PYSONEncoder, PYSONDecoder
+from trytond.sendmail import sendmail
+from trytond.transaction import Transaction
 
+import unicodedata
 
-__all__ = ['ProfileCSV', 'ProfileCSVColumn', 'ImportCSVLog',
-    'ImportCSVStart', 'ImportCSV']
+__all__ = ['ProfileCSV', 'ProfileCSVColumn', 'ImportCSVFile']
 
 logger = logging.getLogger(__name__)
 
@@ -24,13 +28,13 @@ class ProfileCSV(ModelSQL, ModelView):
     name = fields.Char('Name', required=True)
     model = fields.Many2One('ir.model', 'Model', required=True)
     header = fields.Boolean('Header',
-        help='Header (field names) on archives')
+        help='Header (field names) on csv files')
     separator = fields.Selection([
             (',', 'Comma'),
             (';', 'Semicolon'),
             ('tab', 'Tabulator'),
             ('|', '|'),
-            ], 'CSV Separator', help="Archive CSV Separator",
+            ], 'CSV Separator', help="File CSV Separator",
         required=True)
     quote = fields.Char('Quote',
         help='Character to use as quote')
@@ -87,25 +91,12 @@ class ProfileCSV(ModelSQL, ModelView):
     def default_decimal_separator():
         return ","
 
-    def read_csv_file(self, archive):
-        '''Read CSV data'''
-        separator = self.separator
-        if separator == "tab":
-            separator = '\t'
-        quote = self.quote
-
-        data = BytesIO(archive)
-        if quote:
-            rows = reader(data, delimiter=str(separator), quotechar=str(quote))
-        else:
-            rows = reader(data, delimiter=str(separator))
-        return rows
-
 
 class ProfileCSVColumn(ModelSQL, ModelView):
     'Profile CSV Column'
     __name__ = 'profile.csv.column'
-    profile_csv = fields.Many2One('profile.csv', 'Profile CSV', required=True)
+    profile_csv = fields.Many2One('profile.csv', 'Profile CSV', required=True,
+        ondelete='CASCADE')
     column = fields.Char('Column', required=False, states={
             'invisible': Bool(Eval('constant'))
             },
@@ -418,122 +409,27 @@ class ProfileCSVColumn(ModelSQL, ModelView):
         return get_field_value(**kvargs)
 
 
-class ImportCSVLog(ModelSQL, ModelView):
-    'Import CSV Log'
-    __name__ = 'import.csv.log'
-    _rec_name = 'status'
-    status = fields.Selection([
-            ('done', 'Done'),
-            ('skipped', 'Skipped'),
-            ], 'Status',
-        states={
-            'readonly': True,
-            })
-    origin = fields.Reference('Origin', selection='get_origin', select=True,
-        states={
-            'required': True,
-            'invisible': True,
-            'readonly': True,
-            })
-    comment = fields.Text('Comment', states={
-            'readonly': True,
-            })
-    date_time = fields.DateTime('Date and Time', states={
-            'readonly': True,
-            })
-    parent = fields.Many2One('import.csv.log', 'Parent', states={
-            'invisible': True,
-            'readonly': True,
-            },
-        )
-    children = fields.One2Many('import.csv.log', 'parent', 'Log Lines',
-        states={
-            'readonly': True,
-            })
-
-    @classmethod
-    def __setup__(cls):
-        super(ImportCSVLog, cls).__setup__()
-        cls._order.insert(0, ('date_time', 'DESC'))
-
-    @staticmethod
-    def _get_origin():
-        'Return list of Model names for origin Reference'
-        return ['profile.csv']
-
-    @classmethod
-    def get_origin(cls):
-        IrModel = Pool().get('ir.model')
-        models = cls._get_origin()
-        models = IrModel.search([
-                ('model', 'in', models),
-                ])
-        return [(None, '')] + [(m.model, m.name) for m in models]
-
-    @classmethod
-    def view_attributes(cls):
-        return [('/tree', 'colors',
-                If(Equal(Eval('status'), 'skipped'), 'red', 'darkgreen'))]
-
-
-class ImportCSVStart(ModelView):
-    'Import CSV start'
-    __name__ = 'import.csv.start'
+class ImportCSVFile(ModelSQL, ModelView):
+    'Import CSV File'
+    __name__ = 'import.csv.file'
     profile_csv = fields.Many2One('profile.csv', 'CSV',
         required=True)
-    import_file = fields.Binary('Import File', required=True)
-    header = fields.Boolean('Headers',
-        help='Set this check box to true if CSV file has headers.')
-    attachment = fields.Boolean('Attachment',
-        help='Attach CSV file after import.')
-    character_encoding = fields.Selection([
-            ('utf-8', 'UTF-8'),
-            ('latin-1', 'Latin-1'),
-            ], 'Character Encoding')
+    csv_file = fields.Binary('CSV File', required=True)
     skip_repeated = fields.Boolean('Skip Repeated',
         help='If any record of the CSV file is already imported, skip it.')
     update_record = fields.Boolean('Update Record',
-        help='If any record of the CSV file is already found with search domain, '
-            'update records.')
-
-    @classmethod
-    def default_profile_csv(cls):
-        ProfileCSV = Pool().get('profile.csv')
-        profile_csvs = ProfileCSV.search([])
-        if len(profile_csvs) == 1:
-            return profile_csvs[0].id
-
-    @classmethod
-    def default_skip_repeated(cls):
-        return True
-
-    @classmethod
-    def default_character_encoding(cls):
-        ProfileCSV = Pool().get('profile.csv')
-        profile_csvs = ProfileCSV.search([])
-        if len(profile_csvs) == 1:
-            return profile_csvs[0].character_encoding
-        return 'utf-8'
-
-    @fields.depends('profile_csv')
-    def on_change_profile_csv(self):
-        if self.profile_csv:
-            self.character_encoding = (
-                self.profile_csv.character_encoding)
-
-
-class ImportCSV(Wizard):
-    'Import CSV'
-    __name__ = 'import.csv'
-    start = StateView('import.csv.start', 'import_csv.import_csv_start', [
-            Button('Cancel', 'end', 'tryton-cancel'),
-            Button('Import File', 'import_file', 'tryton-ok', default=True),
-            ])
-    import_file = StateTransition()
+        help='If any record of the CSV file is already found with search '
+            'domain, update records.')
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('done', 'Done'),
+        ], 'State', states={
+            'readonly': True,
+            })
 
     @classmethod
     def __setup__(cls):
-        super(ImportCSV, cls).__setup__()
+        super(ImportCSVFile, cls).__setup__()
         cls._error_messages.update({
                 'general_failure': 'Please, check that the CSV file is '
                     'effectively a CSV file.',
@@ -557,165 +453,194 @@ class ImportCSV(Wizard):
                     'implemented yet.',
                 'match_expression_error': 'Error in Match Expression Domain. '
                     'Error raised: %s',
+                'record_added': 'Record %s added.',
+                'record_updated': 'Record %s updated.',
+                'email_subject': 'CSV Import result',
+                'user_email_error': '%s has not any email address',
+                'functional_field_error': 'Functional field %s has not setter '
+                    'method.',
+                })
+        cls._buttons.update({
+                'import_file': {
+                    'invisible': Eval('state') != 'draft',
+                    },
                 })
 
-    def transition_import_file(self):
+    @classmethod
+    def default_skip_repeated(cls):
+        return True
+
+    @classmethod
+    def default_state(cls):
+        return 'draft'
+
+    @classmethod
+    def prepare_message(cls):
+        User = Pool().get('res.user')
+        user = User(Transaction().user)
+
+        to_addr = user.email or config.get('email', 'from')
+        if not to_addr:
+            cls.raise_user_error('user_email_error', error_args=(user.name,))
+
+        return to_addr
+
+    @classmethod
+    def create_message(cls, from_addr, to_addrs, subject, message):
+        msg = MIMEText(message, _charset='utf-8')
+        msg['To'] = ', '.join(to_addrs)
+        msg['From'] = from_addr
+        msg['Subject'] = Header(subject, 'utf-8')
+        return msg
+
+    @classmethod
+    def send_message(cls, message):
+        to_addr = cls.prepare_message()
+        from_addr = config.get('email', 'uri')
+        subject = cls.raise_user_error('email_subject', raise_exception=False)
+        msg = cls.create_message(from_addr, [to_addr], subject, message)
+        sendmail(from_addr, [to_addr], msg)
+
+    def read_csv_file(self):
+        '''Read CSV data'''
+        separator = self.profile_csv.separator
+        if separator == "tab":
+            separator = '\t'
+        quote = self.profile_csv.quote
+
+        data = BytesIO(self.csv_file)
+        if quote:
+            rows = reader(data, delimiter=str(separator), quotechar=str(quote))
+        else:
+            rows = reader(data, delimiter=str(separator))
+        return rows
+
+    @classmethod
+    @ModelView.button
+    def import_file(cls, csv_files):
         pool = Pool()
-        Attachment = pool.get('ir.attachment')
 
-        profile_csv = self.start.profile_csv
-        model = profile_csv.model
-        Model = pool.get(model.model)
-        import_file = self.start.import_file
-        has_header = self.start.header
-        has_attachment = self.start.attachment
-        skip_repeated = self.start.skip_repeated
-        update_record = self.start.update_record
-
-        data = profile_csv.read_csv_file(import_file)
-
-        if has_header:
-            next(data, None)
+        def add_message_line(profile_csv, status, error_message, error_args):
+            return (str(datetime.now()) + ':\t' +
+                'profile.csv,%s' % profile_csv.id + '\t' +
+                status + '\t' +
+                cls.raise_user_error(
+                    error_message,
+                    error_args=error_args,
+                    raise_exception=False) + '\n'
+                )
 
         to_create = []
         to_update = []
-        log_values = []
-        for row in list(data):
-            if not row:
-                continue
-            values = {}
-            domain = []
-            for column in profile_csv.columns:
-                cells = column.column.split(',')
-                try:
-                    vals = [row[int(c)] for c in cells if c]
-                except IndexError:
-                    self.raise_user_error('csv_format_error')
-                value = column.get_value(vals)
+        for csv_file in csv_files:
+            message = ''
+            profile_csv = csv_file.profile_csv
+            model = profile_csv.model
+            Model = pool.get(model.model)
+            has_header = profile_csv.header
+            skip_repeated = csv_file.skip_repeated
+            update_record = csv_file.update_record
 
-                if value is None and column.field_required():
-                    log_value = {
-                        'date_time': datetime.now(),
-                        }
-                    log_value['origin'] = 'profile.csv,%s' % profile_csv.id
-                    log_value['comment'] = self.raise_user_error(
-                        'required_field_null_error',
-                        error_args=(column.field.field_description, row),
-                        raise_exception=False)
-                    log_value['status'] = 'skipped'
-                    log_values.append(log_value)
-                    break
-                elif column.profile_csv.match_expression:
+            data = csv_file.read_csv_file()
+
+            if has_header:
+                next(data, None)
+
+            for row in list(data):
+                if not row:
+                    continue
+                values = {}
+                domain = []
+                for column in profile_csv.columns:
+                    cells = column.column.split(',')
                     try:
-                        match = eval(column.profile_csv.match_expression)
-                    except (NameError, TypeError, IndexError) as e:
-                        log_value = {
-                            'date_time': datetime.now(),
-                            }
-                        log_value['origin'] = 'profile.csv,%s' % profile_csv.id
-                        log_value['comment'] = self.raise_user_error(
-                            'match_expression_error',
-                            error_args=(e,),
-                            raise_exception=False)
-                        log_value['status'] = 'skipped'
-                        log_values.append(log_value)
-                        break
-                    if match:
-                        log_value = {
-                            'date_time': datetime.now(),
-                            }
-                        log_value['origin'] = 'profile.csv,%s' % profile_csv.id
-                        log_value['comment'] = self.raise_user_error(
-                            'skip_row_filter_error',
-                            error_args=(row),
-                            raise_exception=False)
-                        log_value['status'] = 'skipped'
-                        log_values.append(log_value)
-                        break
-                values[column.field.name] = value
+                        vals = [row[int(c)] for c in cells if c]
+                    except IndexError:
+                        cls.raise_user_error('csv_format_error')
 
-                if column.field.name and column.add_to_domain:
-                    if column.ttype in ('one2many', 'many2many'):
-                        operator = 'in'
-                        if value[0][0] == 'add':
-                            value = value[0][1]
-                        elif value[0][0] == 'create':
-                            Relation = pool.get(column.field.relation)
-                            val = []
-                            for record in value[0][1]:
-                                dom = []
-                                for field in record:
-                                    dom.append((field, '=', record[field]))
-                                val += [r.id for r in Relation.search(dom)]
-                            value = val
-                        else:
-                            self.raise_user_error('not_implemented_error',
-                                raise_exception=True)
-                    else:
-                        operator = '='
-                    domain.append((
-                            column.field.name,
-                            operator,
-                            value
-                            ))
-            else:
-                if domain:
-                    records = Model.search(domain)
+                    field = Model._fields[column.field.name]
+                    if (getattr(field, 'getter', None)
+                            and not getattr(field, 'setter', None)):
+                        cls.raise_user_error('functional_field_error',
+                            error_args=column.field.name,
+                            raise_exception=True)
 
-                    if update_record and records:
-                        to_update.append({
-                            'records': records,
-                            'values': values,
-                            })
-                    else:
-                        if skip_repeated and records:
-                            log_value = {
-                                'date_time': datetime.now(),
-                                }
-                            log_value['origin'] = 'profile.csv,%s' % profile_csv.id
-                            log_value['comment'] = self.raise_user_error(
-                                'record_already_exists_error',
-                                error_args=(records[0].rec_name,),
-                                raise_exception=False)
-                            log_value['status'] = 'skipped'
-                            log_values.append(log_value)
-                            continue
+                    value = column.get_value(vals)
+                    if value is None and column.field_required():
+                        message += add_message_line('skipped',
+                            row, 'required_field_null_error',
+                            (profile_csv, column))
+                        break
+                    elif column.profile_csv.match_expression:
+                        try:
+                            match = eval(column.profile_csv.match_expression)
+                        except (NameError, TypeError, IndexError) as e:
+                            message += add_message_line(profile_csv,
+                                'skipped', 'match_expression_error', (e,))
+                            break
+                        if match:
+                            message += add_message_line(profile_csv,
+                                'skipped', 'skip_row_filter_error', (row))
+                            break
+
+                    values[column.field.name] = value
+
+                    if column.field.name and column.add_to_domain:
+                        if column.ttype in ('one2many', 'many2many'):
+                            operator = 'in'
+                            if value[0][0] == 'add':
+                                value = value[0][1]
+                            elif value[0][0] == 'create':
+                                Relation = pool.get(column.field.relation)
+                                val = []
+                                for record in value[0][1]:
+                                    dom = []
+                                    for field in record:
+                                        dom.append((field, '=', record[field]))
+                                    val += [r.id for r in Relation.search(dom)]
+                                value = val
+                            else:
+                                cls.raise_user_error('not_implemented_error',
+                                    raise_exception=True)
                         else:
-                            to_create.append(values)
+                            operator = '='
+
+                        domain.append((
+                                column.field.name.encode('utf-8'),
+                                operator,
+                                value,
+                                ))
                 else:
-                    to_create.append(values)
+                    if domain:
+                        records = Model.search(domain)
 
-                log_value = {
-                    'date_time': datetime.now(),
-                    }
-                log_value['origin'] = 'profile.csv,%s' % profile_csv.id
-                log_value['comment'] = ('Record %s added.' % (values))
-                log_value['status'] = 'done'
-                log_values.append(log_value)
+                        if update_record and records:
+                            for record in records:
+                                for field in values:
+                                    setattr(record, field, values[field])
+                            to_update.extend(records)
+                            message += add_message_line(profile_csv,
+                                'done', 'record_updated', (values))
+                        else:
+                            if skip_repeated and records:
+                                message += add_message_line(profile_csv,
+                                    'skipped', 'record_already_exists_error',
+                                    (records[0].rec_name,))
+                                continue
+                            else:
+                                to_create.append(Model(**values))
+                            message += add_message_line(profile_csv,
+                                'done', 'record_added', (values))
+                    else:
+                        to_create.append(Model(**values))
+                        message += add_message_line(profile_csv,
+                            'done', 'record_added', (values))
 
-        if to_create:
-            Model.create(to_create)
+            if to_create:
+                Model.save(to_create)
 
-        if to_update:
-            for update in to_update:
-                Model.write(update['records'], update['values'])
+            if to_update:
+                Model.save(to_update)
 
-        csv_log, = ImportCSVLog.create([{
-                'date_time': datetime.now(),
-                'origin': 'profile.csv,%s' % profile_csv.id,
-                'comment': '%s %s' % (profile_csv.name, datetime.now()),
-                'status': 'done',
-                'children': [
-                    ('create', log_values),
-                    ],
-                }])
-
-        if has_attachment:
-            attach = Attachment(
-                name=datetime.now().strftime("%y/%m/%d %H:%M:%S"),
-                type='data',
-                data=import_file,
-                resource=str(csv_log))
-            attach.save()
-
-        return 'end'
+            cls.send_message(message)
+        cls.write(csv_files, {'state': 'done'})
