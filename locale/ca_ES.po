@@ -1,8 +1,16 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
+msgid "%s has not any email address"
+msgstr "%s no té cap adreça de correu electrònic"
+
+msgctxt "error:import.csv.file:"
+msgid "CSV Import result"
+msgstr "Resultat d'importación CSV"
+
+msgctxt "error:import.csv.file:"
 msgid ""
 "Database general failure.\n"
 "Error raised: %s."
@@ -10,45 +18,58 @@ msgstr ""
 "Error general a la base de dades.\n"
 "Error: %s."
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
 msgid "Error in Match Expression Domain. Error raised: %s"
-msgstr "Error en el domini de la expressió. L'error és: %s"
+msgstr "Error al domini d'expressió de coincidència. Missatge d'error: %s"
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
 msgid "Field %s is required but not value found in record %s. Record skipped!"
 msgstr ""
-"El camp %s és requerit però no s'ha trobat cap valor al registre %s. "
+"El camp %s es obligatori però no s'ha trobat cap valor al registre %s. "
 "Registre omès!"
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
+msgid "Functional field %s has not setter method."
+msgstr "El camp funcional %s no te mètode setter."
+
+msgctxt "error:import.csv.file:"
 msgid ""
 "Please, check that the CSV file configuration matches with the format of the"
 " CSV file."
 msgstr ""
-"Si us plau, comproveu que la configuració de l'arxiu CSV concorda amb el "
-"format de l'arxiu CSV."
+"Si us plau, comproveu que la configuració del fitxer CSV coincideix amb el "
+"format del fitxer CSV. "
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
 msgid "Please, check that the CSV file is effectively a CSV file."
-msgstr "Si us plau, comproveu que l'arxiu CSV és efectivament un arxiu CSV."
+msgstr ""
+"Si us plau, comproveu que el fitxer CSV és efectivament un fitxer CSV."
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
+msgid "Record %s added."
+msgstr "Registre %s afegit."
+
+msgctxt "error:import.csv.file:"
 msgid "Record %s skipped. Already exists."
 msgstr "Registre %s omès. Ja existeix."
 
-msgctxt "error:import.csv:"
-msgid "Row %s skipped by \"Exclude Row\" filter rule."
-msgstr "Fila %s omesa per la regla de filtre \"Expressió de coincidència\"."
+msgctxt "error:import.csv.file:"
+msgid "Record %s updated."
+msgstr "Registre %s actualitzat."
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
+msgid "Row %s skipped by \"Exclude Row\" filter rule."
+msgstr "Fila %s omesa per la regla de de filtrat \"Exclou fila\""
+
+msgctxt "error:import.csv.file:"
 msgid "This kind of domain is not implemented yet."
 msgstr "Aquest tipus de domini no està implementat encara."
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
 msgid "You cannot import a CSV record because \"%s\" have lines."
 msgstr "No podeu importar un registre CSV perquè \"%s\" té línies."
 
-msgctxt "error:import.csv:"
+msgctxt "error:import.csv.file:"
 msgid "You cannot import a CSV record because \"%s\" is not draft state."
 msgstr ""
 "No podeu importar un registre CSV perquè \"%s\" no està en estat esborrany."
@@ -169,85 +190,49 @@ msgstr ""
 "Els camps \"Columnes\" i \"Constants\" de la línia %s no poden estar buits "
 "alhora. Si us plau ompliu al menys un d'ells."
 
-msgctxt "field:import.csv.log,children:"
-msgid "Log Lines"
-msgstr "Línies de registre"
-
-msgctxt "field:import.csv.log,comment:"
-msgid "Comment"
-msgstr "Comentari"
-
-msgctxt "field:import.csv.log,create_date:"
+msgctxt "field:import.csv.file,create_date:"
 msgid "Create Date"
 msgstr "Data creació"
 
-msgctxt "field:import.csv.log,create_uid:"
+msgctxt "field:import.csv.file,create_uid:"
 msgid "Create User"
 msgstr "Usuari creació"
 
-msgctxt "field:import.csv.log,date_time:"
-msgid "Date and Time"
-msgstr "Data i hora"
+msgctxt "field:import.csv.file,csv_file:"
+msgid "CSV File"
+msgstr "Fitxer CSV"
 
-msgctxt "field:import.csv.log,id:"
+msgctxt "field:import.csv.file,id:"
 msgid "ID"
 msgstr "ID"
 
-msgctxt "field:import.csv.log,origin:"
-msgid "Origin"
-msgstr "Origen"
-
-msgctxt "field:import.csv.log,parent:"
-msgid "Parent"
-msgstr "Pare"
-
-msgctxt "field:import.csv.log,rec_name:"
-msgid "Name"
-msgstr "Nom"
-
-msgctxt "field:import.csv.log,status:"
-msgid "Status"
-msgstr "Estat"
-
-msgctxt "field:import.csv.log,write_date:"
-msgid "Write Date"
-msgstr "Data modificació"
-
-msgctxt "field:import.csv.log,write_uid:"
-msgid "Write User"
-msgstr "Usuari modificació"
-
-msgctxt "field:import.csv.start,attachment:"
-msgid "Attachment"
-msgstr "Adjunts"
-
-msgctxt "field:import.csv.start,character_encoding:"
-msgid "Character Encoding"
-msgstr "Codificació de caràcters"
-
-msgctxt "field:import.csv.start,header:"
-msgid "Headers"
-msgstr "Capçaleres"
-
-msgctxt "field:import.csv.start,id:"
-msgid "ID"
-msgstr "ID"
-
-msgctxt "field:import.csv.start,import_file:"
-msgid "Import File"
-msgstr "Importa arxiu"
-
-msgctxt "field:import.csv.start,profile_csv:"
+msgctxt "field:import.csv.file,profile_csv:"
 msgid "CSV"
 msgstr "CSV"
 
-msgctxt "field:import.csv.start,skip_repeated:"
+msgctxt "field:import.csv.file,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:import.csv.file,skip_repeated:"
 msgid "Skip Repeated"
 msgstr "Omet repetits"
 
-msgctxt "field:import.csv.start,update_record:"
+msgctxt "field:import.csv.file,state:"
+msgid "State"
+msgstr "Estat"
+
+msgctxt "field:import.csv.file,update_record:"
 msgid "Update Record"
 msgstr "Actualitza registre"
+
+msgctxt "field:import.csv.file,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:import.csv.file,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
 
 msgctxt "field:profile.csv,active:"
 msgid "Active"
@@ -377,19 +362,11 @@ msgctxt "field:profile.csv.column,write_uid:"
 msgid "Write User"
 msgstr "Usuari modificació"
 
-msgctxt "help:import.csv.start,attachment:"
-msgid "Attach CSV file after import."
-msgstr "Adjunta arxiu CSV després de la importació."
-
-msgctxt "help:import.csv.start,header:"
-msgid "Set this check box to true if CSV file has headers."
-msgstr "Marqueu aquesta casella si l'arxiu CSV té capçaleres."
-
-msgctxt "help:import.csv.start,skip_repeated:"
+msgctxt "help:import.csv.file,skip_repeated:"
 msgid "If any record of the CSV file is already imported, skip it."
 msgstr "Si algun registre del fitxer CSV ja s'ha importat, omet-lo."
 
-msgctxt "help:import.csv.start,update_record:"
+msgctxt "help:import.csv.file,update_record:"
 msgid ""
 "If any record of the CSV file is already found with search domain, update "
 "records."
@@ -402,7 +379,7 @@ msgid "If there are a number the decimal separator used"
 msgstr "Si hi ha un número el separador de decimals utilitzat."
 
 msgctxt "help:profile.csv,header:"
-msgid "Header (field names) on archives"
+msgid "Header (field names) on csv files"
 msgstr "Capçalera (noms de camp) als arxius."
 
 msgctxt "help:profile.csv,match_expression:"
@@ -420,7 +397,7 @@ msgid "Character to use as quote"
 msgstr "Caràcter utilitzat com delimitador"
 
 msgctxt "help:profile.csv,separator:"
-msgid "Archive CSV Separator"
+msgid "File CSV Separator"
 msgstr "Separador d'arxius CSV"
 
 msgctxt "help:profile.csv,thousands_separator:"
@@ -499,49 +476,25 @@ msgctxt "help:profile.csv.column,selection:"
 msgid "A couple of key and value separated by \":\" per line"
 msgstr "Un parell clau valor separat per \":\" per línia"
 
-msgctxt "model:import.csv.log,name:"
-msgid "Import CSV Log"
-msgstr "Logs d'importació CSV"
+msgctxt "model:import.csv.file,name:"
+msgid "Import CSV File"
+msgstr "Importar fitxer CSV"
 
-msgctxt "model:import.csv.start,name:"
-msgid "Import CSV start"
-msgstr "Inici d'importació CSV"
-
-msgctxt "model:ir.action,name:act_import_csv"
-msgid "Import CSV"
-msgstr "Importar CSV"
-
-msgctxt "model:ir.action,name:act_import_csv_logs"
-msgid "Import CSV Logs"
-msgstr "Logs importació CSV"
-
-msgctxt "model:ir.action,name:act_imported_csv_logs"
-msgid "Import CSV Logs"
-msgstr "Logs importació CSV"
+msgctxt "model:ir.action,name:act_import_csv_file"
+msgid "Import CSV Files"
+msgstr "Importa fitxers CSV"
 
 msgctxt "model:ir.action,name:act_profile_csv"
 msgid "Import CSV Profiles"
 msgstr "Perfils d'importació CSV"
 
-msgctxt "model:ir.action.act_window.domain,name:act_import_csv_logs_all"
-msgid "Alls"
-msgstr "Tots"
-
-msgctxt "model:ir.action.act_window.domain,name:act_import_csv_logs_roots"
-msgid "Parents"
-msgstr "Padres"
-
 msgctxt "model:ir.ui.menu,name:main_menu_import_csv"
 msgid "Import CSV"
-msgstr "Importació CSV"
+msgstr "Importa CSV"
 
-msgctxt "model:ir.ui.menu,name:menu_import_csv"
-msgid "Import CSV"
-msgstr "Importar CSV"
-
-msgctxt "model:ir.ui.menu,name:menu_import_import_csv"
-msgid "Logs"
-msgstr "Logs"
+msgctxt "model:ir.ui.menu,name:menu_import_csv_file"
+msgid "Import CSV Files"
+msgstr "Importa fitxers CSV"
 
 msgctxt "model:ir.ui.menu,name:menu_import_profile_csvs"
 msgid "Import CSV Profiles"
@@ -559,21 +512,13 @@ msgctxt "model:res.group,name:group_import_csv_user"
 msgid "Import CSV User"
 msgstr "Usuari d'importació CSV"
 
-msgctxt "selection:import.csv.log,status:"
+msgctxt "selection:import.csv.file,state:"
 msgid "Done"
 msgstr "Realitzat"
 
-msgctxt "selection:import.csv.log,status:"
-msgid "Skipped"
-msgstr "Omesa"
-
-msgctxt "selection:import.csv.start,character_encoding:"
-msgid "Latin-1"
-msgstr "Latín-1"
-
-msgctxt "selection:import.csv.start,character_encoding:"
-msgid "UTF-8"
-msgstr "UTF-8"
+msgctxt "selection:import.csv.file,state:"
+msgid "Draft"
+msgstr "Esborrany"
 
 msgctxt "selection:profile.csv,character_encoding:"
 msgid "Latin-1"
@@ -623,17 +568,9 @@ msgctxt "selection:profile.csv,thousands_separator:"
 msgid "Others"
 msgstr "Altres"
 
-msgctxt "view:import.csv.log:"
-msgid "Import CSV Logs"
-msgstr "Logs d'importació CSV"
-
-msgctxt "view:import.csv.log:"
-msgid "Time"
-msgstr "Hora"
-
-msgctxt "view:import.csv.start:"
+msgctxt "view:import.csv.file:"
 msgid "Import CSV File"
-msgstr "Importar arxiu CSV"
+msgstr "Importar fitxer CSV"
 
 msgctxt "view:profile.csv.column:"
 msgid "CSV Columns Profiles"
@@ -650,11 +587,3 @@ msgstr "Perfils CSV"
 msgctxt "view:profile.csv:"
 msgid "Profile CSV"
 msgstr "Perfil CSV"
-
-msgctxt "wizard_button:import.csv,start,end:"
-msgid "Cancel"
-msgstr "Cancel·la"
-
-msgctxt "wizard_button:import.csv,start,import_file:"
-msgid "Import File"
-msgstr "Importa arxiu"
