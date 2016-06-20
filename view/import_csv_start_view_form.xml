@@ -4,14 +4,12 @@ copyright notices and license terms. -->
 <form string="Import CSV File">
     <label name="profile_csv"/>
     <field name="profile_csv"/>
-    <label name="import_file"/>
-    <field name="import_file"/>
     <label name="header"/>
     <field name="header"/>
+    <label name="import_file"/>
+    <field name="import_file"/>
     <label name="attachment"/>
     <field name="attachment"/>
-    <label name="character_encoding"/>
-    <field name="character_encoding"/>
     <label name="skip_repeated"/>
     <field name="skip_repeated"/>
     <label name="update_record"/>

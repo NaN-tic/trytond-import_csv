@@ -23,39 +23,39 @@ class ProfileCSV(ModelSQL, ModelView):
     __name__ = 'profile.csv'
     name = fields.Char('Name', required=True)
     model = fields.Many2One('ir.model', 'Model', required=True)
-    header = fields.Boolean('Header',
-        help='Header (field names) on archives')
+    header = fields.Boolean('CSV Header',
+        help='Set this check box if CSV file has a header.')
     separator = fields.Selection([
             (',', 'Comma'),
             (';', 'Semicolon'),
             ('tab', 'Tabulator'),
             ('|', '|'),
-            ], 'CSV Separator', help="Archive CSV Separator",
+            ], 'CSV Separator', help="Field separator in CSV lines.",
         required=True)
-    quote = fields.Char('Quote',
-        help='Character to use as quote')
-    match_expression = fields.Char('Match Expression',
-        help='Eval Python expresion to skip some CSV lines. Example:\n'
-            'row[5] == "Cancelled" and row[11] == "user@domain.com"\n'
-            'Will exclude all rows matching this criteria.')
+    quote = fields.Char('CSV Quote',
+        help='Character to use as a quote of strings.')
+    match_expression = fields.Char('Expression to exclude',
+        help='Eval Python expression to skip some CSV lines, it will exclude '
+            'all rows matching this criteria. Example:\n'
+            'row[5] == "Cancelled" and row[11] == "user@domain.com"\n')
     active = fields.Boolean('Active')
     character_encoding = fields.Selection([
             ('utf-8', 'UTF-8'),
             ('latin-1', 'Latin-1'),
-            ], 'Character Encoding')
+            ], 'CSV Character Encoding')
     thousands_separator = fields.Selection([
             ('none', ''),
             ('.', 'Dot (.)'),
             (',', 'Comma (,)'),
             ('others', 'Others'),
-            ], 'Thousands Separator', help=("If there are a number the "
-                "thousands separator used"),
+            ], 'CSV Thousand Separator',
+        help=('Thousand separator used when there is a number.'),
         required=True)
     decimal_separator = fields.Selection([
             ('.', 'Dot (.)'),
             (',', 'Comma (,)'),
-            ], 'Decimal Separator', help=("If there are a number the "
-                "decimal separator used"),
+            ], 'CSV Decimal Separator',
+        help=('Decimal separator used when there is a number.'),
         required=True)
     columns = fields.One2Many('profile.csv.column', 'profile_csv', 'Columns')
 
@@ -106,11 +106,11 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     'Profile CSV Column'
     __name__ = 'profile.csv.column'
     profile_csv = fields.Many2One('profile.csv', 'Profile CSV', required=True)
-    column = fields.Char('Column', required=False, states={
+    column = fields.Char('Columns', required=False, states={
             'invisible': Bool(Eval('constant'))
             },
-        help='The position of the columns separated by commas corresponding '
-        'to this field.')
+        help='The position of the CSV columns separated by commas '
+            'from get the content of this field. First one is 0.')
     constant = fields.Char('Constant', states={
             'invisible': Bool(Eval('column'))
             },
@@ -127,7 +127,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'required': In(Eval('ttype'),
                 ['datetime', 'date', 'timestamp', 'time']),
             },
-        help='Set the csv format of the DateTime, Date or Timestamp data.\n\n'
+        help='Set the CSV format of the DateTime, Date or Timestamp data.\n\n'
             '%d: Day.\t\t\t\t%H: Hours.\n'
             '%m: Month.\t\t\t%M: Minutes.\n'
             '%Y: Year.\t\t\t\t%S: Seconds.\n\n'
@@ -142,7 +142,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'invisible': Not(In(Eval('ttype'),
                     ['many2one', 'one2many', 'many2many'])),
             },
-        help='Type the python code for mapping this field.\n'
+        help='Type the Python code for mapping this field.\n'
             'You can use:\n'
             '  * self: To make reference to this mapping record.\n'
             '  * pool: To make reference to the data base objects.\n'
@@ -154,7 +154,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'You must assign the result to a variable called "result".')
     add_to_domain = fields.Boolean('Add to Search Domain',
         help='If checked, adds this field to domain for searching records in '
-            'order to avoid duplications.')
+            'order to avoid duplicates.')
     selection = fields.Text('Selection', states={
             'invisible': Eval('ttype') != 'selection',
             }, depends=['ttype'],
@@ -210,8 +210,8 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                     'Field: \'%s\'\n'
                     'Value: \'%s\'\n',
                 'column_and_constant_null_error': 'The "Columns" and '
-                    '"Constant" fields of line %s can not be empty at a time. '
-                    'Please fill at least one of them.',
+                    '"Constant" fields of line %s can not be empty at the '
+                    'same time. Please fill at least one of them.',
                 })
 
     @classmethod
@@ -246,6 +246,19 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     @staticmethod
     def default_add_to_domain():
         return True
+
+    @staticmethod
+    def default_search_record_code():
+        return """
+result = None
+
+Party = pool.get('party.party')
+parties = Party.search([
+    ('name', 'ilike', values[0]),
+    ])
+if parties:
+    result = parties[0]
+"""
 
     def field_required(self):
         field = Pool().get(self.field.model.model)
@@ -481,20 +494,16 @@ class ImportCSVStart(ModelView):
     __name__ = 'import.csv.start'
     profile_csv = fields.Many2One('profile.csv', 'CSV',
         required=True)
-    import_file = fields.Binary('Import File', required=True)
-    header = fields.Boolean('Headers',
-        help='Set this check box to true if CSV file has headers.')
-    attachment = fields.Boolean('Attachment',
-        help='Attach CSV file after import.')
-    character_encoding = fields.Selection([
-            ('utf-8', 'UTF-8'),
-            ('latin-1', 'Latin-1'),
-            ], 'Character Encoding')
+    header = fields.Boolean('CSV Header',
+        help='Set this check box if CSV file has a header.')
+    import_file = fields.Binary('File to import', required=True)
+    attachment = fields.Boolean('Attach CSV file',
+        help='Attach the CSV file after import process.')
     skip_repeated = fields.Boolean('Skip Repeated',
         help='If any record of the CSV file is already imported, skip it.')
-    update_record = fields.Boolean('Update Record',
-        help='If any record of the CSV file is already found with search domain, '
-            'update records.')
+    update_record = fields.Boolean('Update Records',
+        help='If any record of the CSV file is already found with search '
+            'domain, update the record.')
 
     @classmethod
     def default_profile_csv(cls):
@@ -507,19 +516,10 @@ class ImportCSVStart(ModelView):
     def default_skip_repeated(cls):
         return True
 
-    @classmethod
-    def default_character_encoding(cls):
-        ProfileCSV = Pool().get('profile.csv')
-        profile_csvs = ProfileCSV.search([])
-        if len(profile_csvs) == 1:
-            return profile_csvs[0].character_encoding
-        return 'utf-8'
-
     @fields.depends('profile_csv')
     def on_change_profile_csv(self):
         if self.profile_csv:
-            self.character_encoding = (
-                self.profile_csv.character_encoding)
+            self.header = self.profile_csv.header
 
 
 class ImportCSV(Wizard):
@@ -672,7 +672,8 @@ class ImportCSV(Wizard):
                             log_value = {
                                 'date_time': datetime.now(),
                                 }
-                            log_value['origin'] = 'profile.csv,%s' % profile_csv.id
+                            log_value['origin'] = ('profile.csv,%s' %
+                                profile_csv.id)
                             log_value['comment'] = self.raise_user_error(
                                 'record_already_exists_error',
                                 error_args=(records[0].rec_name,),
@@ -695,7 +696,7 @@ class ImportCSV(Wizard):
 
         if to_create:
             Model.create(to_create)
-            
+
         if to_update:
             for update in to_update:
                 Model.write(update['records'], update['values'])
