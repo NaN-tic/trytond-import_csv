@@ -15,8 +15,6 @@ from trytond.pyson import PYSON, PYSONEncoder, PYSONDecoder
 from trytond.sendmail import sendmail
 from trytond.transaction import Transaction
 
-import unicodedata
-
 __all__ = ['ProfileCSV', 'ProfileCSVColumn', 'ImportCSVFile']
 
 logger = logging.getLogger(__name__)
@@ -27,39 +25,39 @@ class ProfileCSV(ModelSQL, ModelView):
     __name__ = 'profile.csv'
     name = fields.Char('Name', required=True)
     model = fields.Many2One('ir.model', 'Model', required=True)
-    header = fields.Boolean('Header',
-        help='Header (field names) on csv files')
+    header = fields.Boolean('CSV Header',
+        help='Set this check box if CSV file has a header.')
     separator = fields.Selection([
             (',', 'Comma'),
             (';', 'Semicolon'),
             ('tab', 'Tabulator'),
             ('|', '|'),
-            ], 'CSV Separator', help="File CSV Separator",
+            ], 'CSV Separator', help="Field separator in CSV lines.",
         required=True)
-    quote = fields.Char('Quote',
-        help='Character to use as quote')
-    match_expression = fields.Char('Match Expression',
-        help='Eval Python expresion to skip some CSV lines. Example:\n'
-            'row[5] == "Cancelled" and row[11] == "user@domain.com"\n'
-            'Will exclude all rows matching this criteria.')
+    quote = fields.Char('CSV Quote',
+        help='Character to use as a quote of strings.')
+    match_expression = fields.Char('Exclude Rows',
+        help='Eval Python expression to skip some CSV lines, it will exclude '
+            'all rows matching this criteria. Example:\n'
+            'row[5] == "Cancelled" and row[11] == "user@domain.com"\n')
     active = fields.Boolean('Active')
     character_encoding = fields.Selection([
             ('utf-8', 'UTF-8'),
             ('latin-1', 'Latin-1'),
-            ], 'Character Encoding')
+            ], 'CSV Character Encoding')
     thousands_separator = fields.Selection([
             ('none', ''),
             ('.', 'Dot (.)'),
             (',', 'Comma (,)'),
             ('others', 'Others'),
-            ], 'Thousands Separator', help=("If there are a number the "
-                "thousands separator used"),
+            ], 'CSV Thousand Separator',
+        help=('Thousand separator used when there is a number.'),
         required=True)
     decimal_separator = fields.Selection([
             ('.', 'Dot (.)'),
             (',', 'Comma (,)'),
-            ], 'Decimal Separator', help=("If there are a number the "
-                "decimal separator used"),
+            ], 'CSV Decimal Separator',
+        help=('Decimal separator used when there is a number.'),
         required=True)
     columns = fields.One2Many('profile.csv.column', 'profile_csv', 'Columns')
 
@@ -95,13 +93,13 @@ class ProfileCSV(ModelSQL, ModelView):
 class ProfileCSVColumn(ModelSQL, ModelView):
     'Profile CSV Column'
     __name__ = 'profile.csv.column'
-    profile_csv = fields.Many2One('profile.csv', 'Profile CSV', required=True,
+    profile_csv = fields.Many2One('profile.csv', 'CSV Profile', required=True,
         ondelete='CASCADE')
-    column = fields.Char('Column', required=False, states={
+    column = fields.Char('Columns', required=False, states={
             'invisible': Bool(Eval('constant'))
             },
-        help='The position of the columns separated by commas corresponding '
-        'to this field.')
+        help='The position of the CSV columns separated by commas '
+            'to get the content of this field. First one is 0.')
     constant = fields.Char('Constant', states={
             'invisible': Bool(Eval('column'))
             },
@@ -118,7 +116,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'required': In(Eval('ttype'),
                 ['datetime', 'date', 'timestamp', 'time']),
             },
-        help='Set the csv format of the DateTime, Date or Timestamp data.\n\n'
+        help='Set the CSV format of the DateTime, Date or Timestamp data.\n\n'
             '%d: Day.\t\t\t\t%H: Hours.\n'
             '%m: Month.\t\t\t%M: Minutes.\n'
             '%Y: Year.\t\t\t\t%S: Seconds.\n\n'
@@ -133,7 +131,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'invisible': Not(In(Eval('ttype'),
                     ['many2one', 'one2many', 'many2many'])),
             },
-        help='Type the python code for mapping this field.\n'
+        help='Type the Python code for mapping this field.\n'
             'You can use:\n'
             '  * self: To make reference to this mapping record.\n'
             '  * pool: To make reference to the data base objects.\n'
@@ -145,7 +143,7 @@ class ProfileCSVColumn(ModelSQL, ModelView):
             'You must assign the result to a variable called "result".')
     add_to_domain = fields.Boolean('Add to Search Domain',
         help='If checked, adds this field to domain for searching records in '
-            'order to avoid duplications.')
+            'order to avoid duplicates.')
     selection = fields.Text('Selection', states={
             'invisible': Eval('ttype') != 'selection',
             }, depends=['ttype'],
@@ -201,8 +199,8 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                     'Field: \'%s\'\n'
                     'Value: \'%s\'\n',
                 'column_and_constant_null_error': 'The "Columns" and '
-                    '"Constant" fields of line %s can not be empty at a time. '
-                    'Please fill at least one of them.',
+                    '"Constant" fields of line %s can not be empty at the '
+                    'same time. Please fill at least one of them.',
                 })
 
     @classmethod
@@ -237,6 +235,18 @@ class ProfileCSVColumn(ModelSQL, ModelView):
     @staticmethod
     def default_add_to_domain():
         return True
+
+    @staticmethod
+    def default_search_record_code():
+        return """result = None
+
+Party = pool.get('party.party')
+parties = Party.search([
+    ('name', 'ilike', values[0]),
+    ])
+if parties:
+    result = parties[0]
+"""
 
     def field_required(self):
         field = Pool().get(self.field.model.model)
@@ -412,14 +422,14 @@ class ProfileCSVColumn(ModelSQL, ModelView):
 class ImportCSVFile(ModelSQL, ModelView):
     'Import CSV File'
     __name__ = 'import.csv.file'
-    profile_csv = fields.Many2One('profile.csv', 'CSV',
+    profile_csv = fields.Many2One('profile.csv', 'CSV Profile',
         required=True)
-    csv_file = fields.Binary('CSV File', required=True)
+    csv_file = fields.Binary('CSV File to import', required=True)
     skip_repeated = fields.Boolean('Skip Repeated',
         help='If any record of the CSV file is already imported, skip it.')
-    update_record = fields.Boolean('Update Record',
-        help='If any record of the CSV file is already found with search '
-            'domain, update records.')
+    update_record = fields.Boolean('Update Records',
+        help='If any record of the CSV file is found with the search domain, '
+            'update the record.')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('done', 'Done'),
