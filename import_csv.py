@@ -34,7 +34,7 @@ class ProfileCSV(ModelSQL, ModelView):
         required=True)
     quote = fields.Char('CSV Quote',
         help='Character to use as a quote of strings.')
-    match_expression = fields.Char('Expression to exclude',
+    match_expression = fields.Char('Exclude Rows',
         help='Eval Python expression to skip some CSV lines, it will exclude '
             'all rows matching this criteria. Example:\n'
             'row[5] == "Cancelled" and row[11] == "user@domain.com"\n')
@@ -492,11 +492,11 @@ class ImportCSVLog(ModelSQL, ModelView):
 class ImportCSVStart(ModelView):
     'Import CSV start'
     __name__ = 'import.csv.start'
-    profile_csv = fields.Many2One('profile.csv', 'CSV',
+    profile_csv = fields.Many2One('profile.csv', 'CSV Profile',
         required=True)
     header = fields.Boolean('CSV Header',
         help='Set this check box if CSV file has a header.')
-    import_file = fields.Binary('File to import', required=True)
+    import_file = fields.Binary('CSV File to import', required=True)
     attachment = fields.Boolean('Attach CSV file',
         help='Attach the CSV file after import process.')
     skip_repeated = fields.Boolean('Skip Repeated',
