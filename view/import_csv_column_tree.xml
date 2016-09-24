@@ -2,7 +2,7 @@
 <!-- This file is part of import_csv module for Tryton.
 The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
-<tree string="CSV Columns Profiles">
+<tree>
     <field name="profile_csv"/>
     <field name="field"/>
     <field name="subfield"/>
