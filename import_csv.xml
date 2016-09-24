@@ -18,48 +18,49 @@ copyright notices and license terms. -->
             <field name="group" ref="group_import_csv_user"/>
         </record>
 
-        <!-- profile.csv -->
-        <record model="ir.ui.view" id="profile_csv_tree_view">
-            <field name="model">profile.csv</field>
+        <!-- import.csv -->
+        <record model="ir.ui.view" id="import_csv_tree_view">
+            <field name="model">import.csv</field>
             <field name="type">tree</field>
-            <field name="name">profile_csv_tree</field>
+            <field name="name">import_csv_tree</field>
         </record>
-        <record model="ir.ui.view" id="profile_csv_form_view">
-            <field name="model">profile.csv</field>
+        <record model="ir.ui.view" id="import_csv_form_view">
+            <field name="model">import.csv</field>
             <field name="type">form</field>
-            <field name="name">profile_csv_form</field>
+            <field name="name">import_csv_form</field>
         </record>
 
-        <record model="ir.action.act_window" id="act_profile_csv">
+        <record model="ir.action.act_window" id="act_import_csv">
             <field name="name">Import CSV Profiles</field>
-            <field name="res_model">profile.csv</field>
+            <field name="res_model">import.csv</field>
         </record>
-        <record model="ir.action.act_window.view" id="act_profile_csv_tree">
+        <record model="ir.action.act_window.view" id="act_import_csv_tree">
             <field name="sequence" eval="10"/>
-            <field name="view" ref="profile_csv_tree_view"/>
-            <field name="act_window" ref="act_profile_csv"/>
+            <field name="view" ref="import_csv_tree_view"/>
+            <field name="act_window" ref="act_import_csv"/>
         </record>
-        <record model="ir.action.act_window.view" id="act_profile_csv_form">
+        <record model="ir.action.act_window.view" id="act_import_csv_form">
             <field name="sequence" eval="20"/>
-            <field name="view" ref="profile_csv_form_view"/>
-            <field name="act_window" ref="act_profile_csv"/>
+            <field name="view" ref="import_csv_form_view"/>
+            <field name="act_window" ref="act_import_csv"/>
         </record>
         <menuitem
+            name="CSV Profiles"
             parent="main_menu_import_csv"
-            action="act_profile_csv"
-            id="menu_import_profile_csvs"
+            action="act_import_csv"
+            id="menu_import_import_csvs"
             sequence="10"/>
 
-        <!-- profile.csv.column -->
-        <record model="ir.ui.view" id="profile_csv_column_tree_view">
-            <field name="model">profile.csv.column</field>
+        <!-- import.csv.column -->
+        <record model="ir.ui.view" id="import_csv_column_tree_view">
+            <field name="model">import.csv.column</field>
             <field name="type">tree</field>
-            <field name="name">profile_csv_column_tree</field>
+            <field name="name">import_csv_column_tree</field>
         </record>
-        <record model="ir.ui.view" id="profile_csv_column_form_view">
-            <field name="model">profile.csv.column</field>
+        <record model="ir.ui.view" id="import_csv_column_form_view">
+            <field name="model">import.csv.column</field>
             <field name="type">form</field>
-            <field name="name">profile_csv_column_form</field>
+            <field name="name">import_csv_column_form</field>
         </record>
 
         <!-- import csv file -->
@@ -88,7 +89,7 @@ copyright notices and license terms. -->
             <field name="act_window" ref="act_import_csv_file"/>
         </record>
         <menuitem
-            name="Import CSV Files"
+            name="CSV Files"
             parent="main_menu_import_csv"
             action="act_import_csv_file"
             id="menu_import_csv_file"/>

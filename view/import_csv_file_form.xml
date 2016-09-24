@@ -6,11 +6,15 @@ copyright notices and license terms. -->
     <field name="profile_csv"/>
     <label name="csv_file"/>
     <field name="csv_file"/>
+    <label name="file_name"/>
+    <field name="file_name"/>
     <label name="skip_repeated"/>
     <field name="skip_repeated"/>
     <label name="update_record"/>
     <field name="update_record"/>
-    <label name="state"/>
-    <field name="state"/>
-    <button name="import_file" string="Import CSV File" colspan="2"/>
+    <group col="4" colspan="4" id="import_buttons">
+        <label name="state"/>
+        <field name="state"/>
+        <button name="import_file" string="Import CSV File" colspan="2"/>
+    </group>
 </form>

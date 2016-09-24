@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- This file is part of import_csv module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tree string="CSV Columns Profiles">
+    <field name="profile_csv"/>
+    <field name="field"/>
+    <field name="subfield"/>
+    <field name="column"/>
+    <field name="constant"/>
+    <field name="ttype"/>
+    <field name="add_to_domain"/>
+    <field name="date_format"/>
+</tree>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- This file is part of import_csv module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<form string="Profile CSV Column">
+    <label name="field"/>
+    <field name="field"/>
+    <label name="subfield"/>
+    <field name="subfield"/>
+    <group id="values" colspan="2" col="4">
+        <label name="column"/>
+        <field name="column"/>
+        <label name="constant"/>
+        <field name="constant"/>
+    </group>
+    <label name="ttype"/>
+    <field name="ttype"/>
+    <label name="date_format"/>
+    <field name="date_format"/>
+    <label name="add_to_domain"/>
+    <field name="add_to_domain"/>
+    <field name="selection" colspan="4"/>
+    <label name="profile_csv"/>
+    <field name="profile_csv"/>
+</form>

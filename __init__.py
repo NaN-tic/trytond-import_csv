@@ -3,10 +3,9 @@
 from trytond.pool import Pool
 from .import_csv import *
 
-
 def register():
     Pool.register(
-        ProfileCSV,
-        ProfileCSVColumn,
+        ImportCSV,
+        ImportCSVColumn,
         ImportCSVFile,
         module='import_csv', type_='model')

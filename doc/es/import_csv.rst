@@ -43,11 +43,6 @@ Por ejemplo, en el modelo de "Terceros":
 * Columna 0 -> Campo "name"
 * Columna 1 -> Campo "lang"
 
-Campos relación 'uno a muchos' (o2m), 'muchos a uno' (m2o) o 'muchos a muchos' (m2m)
-====================================================================================
-
-# TODO DOC Uso del campo "search_record_code" y como se usan o se relaciona los datos relacionados.
-
 .. inheritref:: import_csv/import_csv:section:actualizar
 
 Actualizar
