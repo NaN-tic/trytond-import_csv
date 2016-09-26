@@ -6,21 +6,12 @@ Imports::
 
     >>> import os
     >>> from proteus import config, Model, Wizard, Report
+    >>> from trytond.tests.tools import install_modules
     >>> from trytond.modules.import_csv.tests.tools import read_csv_file
-
-Create database::
-
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
 
 Install party and import_csv::
 
-    >>> Module = Model.get('ir.module')
-    >>> party_module, = Module.find([('name', '=', 'party')])
-    >>> party_module.click('install')
-    >>> csv_module, = Module.find([('name', '=', 'import_csv')])
-    >>> csv_module.click('install')
-    >>> Wizard('ir.module.install_upgrade').execute('upgrade')
+    >>> config = install_modules(['party','import_csv'])
 
 Models::
 
