@@ -2,7 +2,7 @@
 # copyright notices and license terms.
 from email.header import Header
 from email.mime.text import MIMEText
-from io import BytesIO
+from io import StringIO
 from csv import reader
 from datetime import datetime, date, time
 from decimal import Decimal
@@ -251,7 +251,7 @@ class ImportCSVColumn(ModelSQL, ModelView):
             profile_model = Model(Transaction().context.get('model'))
         else:
             return None
-    
+
         ProfileModel = Pool().get(profile_model.model)
 
         if (self.field and
@@ -331,11 +331,13 @@ class ImportCSVColumn(ModelSQL, ModelView):
         result = ''
         for value in values:
             character_encoding = self.profile_csv.character_encoding
-            try:
-                value = value.decode(character_encoding)
-            except:
-                self.raise_user_error('char_encoding_error',
-                    error_args=(self.field.name))
+            # Python3 strings can not be decoded
+            if hasattr(value, 'decode'):
+                try:
+                    value = value.decode(character_encoding)
+                except:
+                    self.raise_user_error('char_encoding_error',
+                        error_args=(self.field.name))
             if result:
                 result += ', ' + value
             else:
@@ -407,14 +409,9 @@ class ImportCSVColumn(ModelSQL, ModelView):
 
     def get_many2one(self, values):
         Model = Pool().get(self.field.relation)
-        print [
-            ('name', '=', values[0]),
-            ]
         records = Model.search([
             ('name', '=', values[0]),
             ])
-        print "------------"
-        print records
         if records:
             return record[0]
         else:
@@ -537,7 +534,11 @@ class ImportCSVFile(ModelSQL, ModelView):
             separator = '\t'
         quote = self.profile_csv.quote
 
-        data = BytesIO(self.csv_file)
+        file_ = self.csv_file
+        # On python3 we must convert the binary file to string
+        if hasattr(file_, 'decode'):
+            file_ = file_.decode(self.profile_csv.character_encoding)
+        data = StringIO(file_)
         if quote:
             rows = reader(data, delimiter=str(separator), quotechar=str(quote))
         else:
@@ -577,7 +578,7 @@ class ImportCSVFile(ModelSQL, ModelView):
 
         logs = []
         to_save = []
-        for row in list(data):
+        for row in data:
             if not row:
                 continue
 

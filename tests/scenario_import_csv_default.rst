@@ -6,6 +6,7 @@ Imports::
 
     >>> import os
     >>> from proteus import config, Model, Wizard, Report
+    >>> from trytond.modules.import_csv.tests.tools import read_csv_file
 
 Create database::
 
@@ -57,7 +58,8 @@ Create Default import file::
 
     >>> file_ = ImportCSVFile()
     >>> file_.profile_csv = profile
-    >>> file_.csv_file = open(os.path.join(os.path.dirname(__file__), 'default.csv')).read()
+    >>> filename = os.path.join(os.path.dirname(__file__), 'default.csv')
+    >>> file_.csv_file = read_csv_file(filename)
     >>> file_.file_name = 'default.csv'
     >>> file_.save()
     >>> file_.click('import_file')
@@ -139,7 +141,8 @@ Create Party import file::
 
     >>> file2_ = ImportCSVFile()
     >>> file2_.profile_csv = profile2
-    >>> file2_.csv_file = open(os.path.join(os.path.dirname(__file__), 'party.csv')).read()
+    >>> filename = os.path.join(os.path.dirname(__file__), 'party.csv')
+    >>> file2_.csv_file = read_csv_file(filename)
     >>> file2_.file_name = 'party.csv'
     >>> file2_.save()
     >>> file2_.click('import_file')
