@@ -6,12 +6,12 @@ Imports::
 
     >>> import os
     >>> from proteus import config, Model, Wizard, Report
-    >>> from trytond.tests.tools import install_modules
+    >>> from trytond.tests.tools import activate_modules
     >>> from trytond.modules.import_csv.tests.tools import read_csv_file
 
 Install party and import_csv::
 
-    >>> config = install_modules(['party','import_csv'])
+    >>> config = activate_modules(['party','import_csv'])
 
 Models::
 
