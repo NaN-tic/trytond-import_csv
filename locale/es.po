@@ -175,11 +175,11 @@ msgstr "Columnas"
 
 msgctxt "field:import.csv,create_date:"
 msgid "Create Date"
-msgstr "Fecha de creación"
+msgstr "Fecha creación"
 
 msgctxt "field:import.csv,create_uid:"
 msgid "Create User"
-msgstr "Usuario de creación"
+msgstr "Usuario creación"
 
 msgctxt "field:import.csv,decimal_separator:"
 msgid "CSV Decimal Separator"
@@ -195,7 +195,7 @@ msgstr "Cabezera CSV"
 
 msgctxt "field:import.csv,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:import.csv,match_expression:"
 msgid "Exclude Rows"
@@ -231,11 +231,11 @@ msgstr "Separador de miles CSV"
 
 msgctxt "field:import.csv,write_date:"
 msgid "Write Date"
-msgstr "Fecha de modificación"
+msgstr "Fecha modificación"
 
 msgctxt "field:import.csv,write_uid:"
 msgid "Write User"
-msgstr "Usuario de modificación"
+msgstr "Usuario modificación"
 
 msgctxt "field:import.csv.column,add_to_domain:"
 msgid "Add to Domain"
@@ -251,11 +251,11 @@ msgstr "Constante"
 
 msgctxt "field:import.csv.column,create_date:"
 msgid "Create Date"
-msgstr "Fecha de creación"
+msgstr "Fecha creación"
 
 msgctxt "field:import.csv.column,create_uid:"
 msgid "Create User"
-msgstr "Usuario de creación"
+msgstr "Usuario creación"
 
 msgctxt "field:import.csv.column,date_format:"
 msgid "Date Format"
@@ -271,7 +271,7 @@ msgstr "Tipo fichero"
 
 msgctxt "field:import.csv.column,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:import.csv.column,profile_csv:"
 msgid "Import CSV"
@@ -299,19 +299,19 @@ msgstr "Tipo fichero"
 
 msgctxt "field:import.csv.column,write_date:"
 msgid "Write Date"
-msgstr "Fecha de modificación"
+msgstr "Fecha modificación"
 
 msgctxt "field:import.csv.column,write_uid:"
 msgid "Write User"
-msgstr "Usuario de modificación"
+msgstr "Usuario modificación"
 
 msgctxt "field:import.csv.file,create_date:"
 msgid "Create Date"
-msgstr "Fecha de creación"
+msgstr "Fecha creación"
 
 msgctxt "field:import.csv.file,create_uid:"
 msgid "Create User"
-msgstr "Usuario de creación"
+msgstr "Usuario creación"
 
 msgctxt "field:import.csv.file,csv_file:"
 msgid "CSV File to import"
@@ -327,7 +327,7 @@ msgstr "Nombre fichero"
 
 msgctxt "field:import.csv.file,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:import.csv.file,profile_csv:"
 msgid "Profile CSV"
@@ -351,11 +351,11 @@ msgstr "Actualizar registros"
 
 msgctxt "field:import.csv.file,write_date:"
 msgid "Write Date"
-msgstr "Fecha de modificación"
+msgstr "Fecha modificación"
 
 msgctxt "field:import.csv.file,write_uid:"
 msgid "Write User"
-msgstr "Usuario de modificación"
+msgstr "Usuario modificación"
 
 msgctxt "help:import.csv,decimal_separator:"
 msgid "Decimal separator used when there is a number."
@@ -486,7 +486,7 @@ msgstr "Perfil CSV"
 
 msgctxt "model:res.group,name:group_import_csv_user"
 msgid "Import CSV User"
-msgstr "Usuario de importación CSV"
+msgstr "Usuario importación CSV"
 
 msgctxt "selection:import.csv,character_encoding:"
 msgid "Latin-1"
