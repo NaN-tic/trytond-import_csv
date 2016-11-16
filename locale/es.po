@@ -175,11 +175,11 @@ msgstr "Columnas"
 
 msgctxt "field:import.csv,create_date:"
 msgid "Create Date"
-msgstr "Fecha creación"
+msgstr "Fecha de creación"
 
 msgctxt "field:import.csv,create_uid:"
 msgid "Create User"
-msgstr "Usuario creación"
+msgstr "Usuario de creación"
 
 msgctxt "field:import.csv,decimal_separator:"
 msgid "CSV Decimal Separator"
@@ -231,11 +231,11 @@ msgstr "Separador de miles CSV"
 
 msgctxt "field:import.csv,write_date:"
 msgid "Write Date"
-msgstr "Fecha modificación"
+msgstr "Fecha de modificación"
 
 msgctxt "field:import.csv,write_uid:"
 msgid "Write User"
-msgstr "Usuario modificación"
+msgstr "Usuario de modificación"
 
 msgctxt "field:import.csv.column,add_to_domain:"
 msgid "Add to Domain"
@@ -251,11 +251,11 @@ msgstr "Constante"
 
 msgctxt "field:import.csv.column,create_date:"
 msgid "Create Date"
-msgstr "Fecha creación"
+msgstr "Fecha de creación"
 
 msgctxt "field:import.csv.column,create_uid:"
 msgid "Create User"
-msgstr "Usuario creación"
+msgstr "Usuario de creación"
 
 msgctxt "field:import.csv.column,date_format:"
 msgid "Date Format"
@@ -299,19 +299,19 @@ msgstr "Tipo fichero"
 
 msgctxt "field:import.csv.column,write_date:"
 msgid "Write Date"
-msgstr "Fecha modificación"
+msgstr "Fecha de modificación"
 
 msgctxt "field:import.csv.column,write_uid:"
 msgid "Write User"
-msgstr "Usuario modificación"
+msgstr "Usuario de modificación"
 
 msgctxt "field:import.csv.file,create_date:"
 msgid "Create Date"
-msgstr "Fecha creación"
+msgstr "Fecha de creación"
 
 msgctxt "field:import.csv.file,create_uid:"
 msgid "Create User"
-msgstr "Usuario creación"
+msgstr "Usuario de creación"
 
 msgctxt "field:import.csv.file,csv_file:"
 msgid "CSV File to import"
@@ -351,11 +351,11 @@ msgstr "Actualizar registros"
 
 msgctxt "field:import.csv.file,write_date:"
 msgid "Write Date"
-msgstr "Fecha modificación"
+msgstr "Fecha de modificación"
 
 msgctxt "field:import.csv.file,write_uid:"
 msgid "Write User"
-msgstr "Usuario modificación"
+msgstr "Usuario de modificación"
 
 msgctxt "help:import.csv,decimal_separator:"
 msgid "Decimal separator used when there is a number."
