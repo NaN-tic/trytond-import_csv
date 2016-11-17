@@ -542,6 +542,7 @@ class ImportCSVFile(ModelSQL, ModelView):
             rows = reader(data, delimiter=str(separator), quotechar=str(quote))
         else:
             rows = reader(data, delimiter=str(separator))
+        data.close()
         return rows
 
     @classmethod
