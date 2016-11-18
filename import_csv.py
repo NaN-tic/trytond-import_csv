@@ -251,7 +251,7 @@ class ImportCSVColumn(ModelSQL, ModelView):
             profile_model = Model(Transaction().context.get('model'))
         else:
             return None
-    
+
         ProfileModel = Pool().get(profile_model.model)
 
         if (self.field and
@@ -542,7 +542,6 @@ class ImportCSVFile(ModelSQL, ModelView):
             rows = reader(data, delimiter=str(separator), quotechar=str(quote))
         else:
             rows = reader(data, delimiter=str(separator))
-        data.close()
         return rows
 
     @classmethod
