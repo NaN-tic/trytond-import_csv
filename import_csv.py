@@ -1,9 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-try:
-    import cStringIO as StringIO
-except ImportError:
-    from io import StringIO
+from io import BytesIO
 from csv import reader
 from datetime import datetime, date, time
 from decimal import Decimal
@@ -97,12 +94,11 @@ class ProfileCSV(ModelSQL, ModelView):
             separator = '\t'
         quote = self.quote
 
-        data = StringIO(archive)
+        data = BytesIO(archive)
         if quote:
             rows = reader(data, delimiter=str(separator), quotechar=str(quote))
         else:
             rows = reader(data, delimiter=str(separator))
-        data.close()
         return rows
 
 
