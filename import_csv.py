@@ -634,7 +634,7 @@ class ImportCSV(Wizard):
                         break
                 values[column.field.name] = value
 
-                if column.field.name and column.add_to_domain:
+                if value and column.field.name and column.add_to_domain:
                     if column.ttype in ('one2many', 'many2many'):
                         operator = 'in'
                         if value[0][0] == 'add':
