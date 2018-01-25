@@ -68,19 +68,19 @@ class ImportCSV(ModelSQL, ModelView):
         res = [('default', 'Default')]
 
         try:
-            Party = pool.get('party.party')
+            pool.get('party.party')
             res.append(('party', 'Party'))
         except KeyError:
             pass
 
         try:
-            Product = pool.get('product.product')
+            pool.get('product.product')
             res.append(('product', 'Product'))
         except KeyError:
             pass
 
         try:
-            Product = pool.get('sale.sale')
+            pool.get('sale.sale')
             res.append(('sale', 'Sale'))
         except KeyError:
             pass
@@ -132,8 +132,8 @@ class ImportCSVColumn(ModelSQL, ModelView):
     column = fields.Char('Columns', required=False, states={
             'invisible': Bool(Eval('constant'))
             },
-        help='The position of the CSV columns separated by commas '
-            'to get the content of this field. First one is 0.')
+        help=('The position of the CSV columns separated by commas '
+            'to get the content of this field. First one is 0.'))
     constant = fields.Char('Constant', states={
             'invisible': Bool(Eval('column'))
             },
@@ -162,7 +162,7 @@ class ImportCSVColumn(ModelSQL, ModelView):
             'required': In(Eval('ttype'),
                 ['datetime', 'date', 'timestamp', 'time']),
             },
-        help='Set the CSV format of the DateTime, Date or Timestamp data.\n\n'
+        help=('Set the CSV format of the DateTime, Date or Timestamp data.\n\n'
             '%d: Day.\t\t\t\t%H: Hours.\n'
             '%m: Month.\t\t\t%M: Minutes.\n'
             '%Y: Year.\t\t\t\t%S: Seconds.\n\n'
@@ -172,7 +172,7 @@ class ImportCSVColumn(ModelSQL, ModelView):
             '\'17:01:56\'\n\n'
             'To see more information visit: '
             'https://docs.python.org/2/library/datetime.html'
-            '?highlight=datetime#strftime-and-strptime-behavior')
+            '?highlight=datetime#strftime-and-strptime-behavior'))
     add_to_domain = fields.Boolean('Add to Domain',
         help='If checked, adds this field to domain for searching records in '
             'order to avoid duplicates.')
@@ -189,17 +189,17 @@ class ImportCSVColumn(ModelSQL, ModelView):
             ('id', 'DESC'),
             ]
         cls._error_messages.update({
-                'columns_must_be_integers':
+                'columns_must_be_integers': (
                     'Columns on field \'%s\' must be integers separated by '
-                    'commas.',
-                'numeric_format_error': 'Error importing numeric.\n'
+                    'commas.'),
+                'numeric_format_error': ('Error importing numeric.\n'
                     'Possible causes:\n\n'
                     '\t- The format of the number is wrong.\n'
                     '\t- The csv file has a header and you does not checked '
                     'the box on the wizard.\n\n'
                     'Field: \'%s\'\n'
-                    'Value: \'%s\'\n',
-                'datetime_format_error': 'Error importing DateTime, Date or '
+                    'Value: \'%s\'\n'),
+                'datetime_format_error': ('Error importing DateTime, Date or '
                     'Time.\n'
                     'Possible causes:\n\n'
                     '\t- The format of the date is wrong.\n'
@@ -207,32 +207,32 @@ class ImportCSVColumn(ModelSQL, ModelView):
                     'the box on the wizard.\n\n'
                     'Field: \'%s\'\n'
                     'Value: \'%s\'\n'
-                    'Format: \'%s\'',
-                'char_encoding_error': 'Error importing Char.\n'
+                    'Format: \'%s\''),
+                'char_encoding_error': ('Error importing Char.\n'
                     'Possible causes:\n\n'
                     '\t- The character encoding of the file is wrong.\n'
-                    'Field: \'%s\'\n',
-                'integer_too_big_error': 'Error importing integer.\n'
+                    'Field: \'%s\'\n'),
+                'integer_too_big_error': ('Error importing integer.\n'
                     'Field \'%s\' has a very big number:\n'
                     'Value: \'%s\'\n'
-                    'Value must be between -2147483648 and 2147483647',
-                'integer_format_error': 'Error importing integer.\n'
+                    'Value must be between -2147483648 and 2147483647'),
+                'integer_format_error': ('Error importing integer.\n'
                     'Possible causes:\n\n'
                     '\t- The format of the number is wrong.\n'
                     '\t- The csv file has a header and you does not checked '
                     'the box on the wizard.\n\n'
                     'Field: \'%s\'\n'
-                    'Value: \'%s\'\n',
-                'boolean_format_error': 'Error importing boolean.\n'
+                    'Value: \'%s\'\n'),
+                'boolean_format_error': ('Error importing boolean.\n'
                     'Possible causes:\n\n'
                     '\t- The format of the boolean is wrong.\n'
                     '\t- The csv file has a header and you does not checked '
                     'the box on the wizard.\n\n'
                     'Field: \'%s\'\n'
-                    'Value: \'%s\'\n',
-                'column_and_constant_null_error': 'The "Columns" and '
+                    'Value: \'%s\'\n'),
+                'column_and_constant_null_error': ('The "Columns" and '
                     '"Constant" fields of line %s can not be empty at the '
-                    'ame time. Please fill at least one of them.',
+                    'ame time. Please fill at least one of them.'),
                 })
 
     @fields.depends('field')
@@ -434,12 +434,12 @@ class ImportCSVColumn(ModelSQL, ModelView):
 class ImportCSVFile(ModelSQL, ModelView):
     'Import CSV File'
     __name__ = 'import.csv.file'
-    _rec_name = 'id'
     profile_csv = fields.Many2One('import.csv', 'Profile CSV', required=True,
         states={
             'readonly': (Eval('state') != 'draft')
         }, depends=['state'])
-    csv_file = fields.Binary('CSV File to import', required=True, filename='file_name',
+    csv_file = fields.Binary(
+        'CSV File to import', required=True, filename='file_name',
         states={
             'readonly': (Eval('state') != 'draft')
         }, depends=['state'])
@@ -456,8 +456,8 @@ class ImportCSVFile(ModelSQL, ModelView):
         states={
             'readonly': (Eval('state') != 'draft')
         }, depends=['state'],
-        help='If any record of the CSV file is found with the search domain, '
-            'update the record.')
+        help=('If any record of the CSV file is found with the search domain, '
+            'update the record.'))
     date_ = fields.DateTime('Date', required=True)
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -473,17 +473,17 @@ class ImportCSVFile(ModelSQL, ModelView):
         cls._order.insert(0, ('date_', 'DESC'))
         cls._order.insert(1, ('id', 'DESC'))
         cls._error_messages.update({
-                'csv_format_error': 'Please, check that the CSV file '
-                    'configuration matches with the format of the CSV file.',
-                'record_already_exists': 'Record %s skipped. '
-                    'Already exists.',
+                'csv_format_error': ('Please, check that the CSV file '
+                    'configuration matches with the format of the CSV file.'),
+                'record_already_exists': ('Record %s skipped. '
+                    'Already exists.'),
                 'record_added': 'Record %s added.',
                 'record_updated': 'Record %s updated.',
                 'email_subject': 'CSV Import result',
                 'user_email_error': '%s has not any email address',
                 'import_successfully': 'Successfully imported %s records.',
-                'import_unsuccessfully': 'Unsuccessfully imported %s records.'
-                    'Check configuration profile or CSV file',
+                'import_unsuccessfully': ('Unsuccessfully imported %s records.'
+                    'Check configuration profile or CSV file'),
                 })
         cls._buttons.update({
                 'import_file': {
@@ -523,7 +523,8 @@ class ImportCSVFile(ModelSQL, ModelView):
         to_addr = cls.prepare_message()
         if to_addr:
             from_addr = config.get('email', 'uri')
-            subject = cls.raise_user_error('email_subject', raise_exception=False)
+            subject = cls.raise_user_error(
+                'email_subject', raise_exception=False)
             msg = cls.create_message(from_addr, [to_addr], subject, message)
             sendmail(from_addr, [to_addr], msg)
 
@@ -547,7 +548,8 @@ class ImportCSVFile(ModelSQL, ModelView):
 
     @classmethod
     def add_message_line(cls, csv_file, status, error_message, error_args):
-        return '%(time)s:\t%(profile)s (%(profile_id)s)\t%(filename)s\t%(status)s\t%(message)s' % {
+        return ('%(time)s:\t%(profile)s '
+            '(%(profile_id)s)\t%(filename)s\t%(status)s\t%(message)s') % {
             'time': datetime.now(),
             'profile': csv_file.profile_csv.rec_name,
             'profile_id': csv_file.profile_csv.id,
@@ -614,21 +616,21 @@ class ImportCSVFile(ModelSQL, ModelView):
                     continue
 
                 if update_record and records:
-                    record, = records # to update
+                    record, = records  # to update
                     logs.append(cls.add_message_line(
                         csv_file,
                         'done',
                         'record_updated',
                         (values)))
                 else:
-                    record = Model() # to create
+                    record = Model()  # to create
                     logs.append(cls.add_message_line(
                         csv_file,
                         'done',
                         'record_added',
                         (values)))
             else:
-                record = Model() # to create
+                record = Model()  # to create
                 logs.append(cls.add_message_line(
                     csv_file,
                     'done',
@@ -658,7 +660,7 @@ class ImportCSVFile(ModelSQL, ModelView):
                     (len(to_save),)))
 
         cls.write([csv_file], {'state': state})
-        Transaction().commit() # force to commit
+        Transaction().connection.commit()  # force to commit
 
         if profile_csv.email:
             cls.send_message('\n'.join(logs))
@@ -716,14 +718,17 @@ class ImportCSVFile(ModelSQL, ModelView):
                     is_party = False
                     values[column.subfield.name] = value
                     if column.add_to_domain:
-                        domain.append(('addresses.'+column.subfield.name, '=', value))
+                        domain.append(
+                            ('addresses.' + column.subfield.name, '=', value))
                     continue
                 elif column.field.name == 'contact_mechanisms' and row[cell]:
                     is_contact = True
                     is_party = False
                     values[column.subfield.name] = value
                     if column.add_to_domain:
-                        domain.append(('contact_mechanisms.'+column.subfield.name, '=', value))
+                        domain.append(
+                            ('contact_mechanisms.' + column.subfield.name,
+                                '=', value))
                     continue
                 elif column.field.name == 'identifiers' and row[cell]:
                     identifiers.append({'code': value})
@@ -776,21 +781,21 @@ class ImportCSVFile(ModelSQL, ModelView):
                     continue
 
                 if update_record and records:
-                    record, = records # to update
+                    record, = records  # to update
                     logs.append(cls.add_message_line(
                         csv_file,
                         'done',
                         'record_updated',
                         (row)))
                 else:
-                    record = Party() # to create
+                    record = Party()  # to create
                     logs.append(cls.add_message_line(
                         csv_file,
                         'done',
                         'record_added',
                         (row)))
             else:
-                record = Party() # to create
+                record = Party()  # to create
                 logs.append(cls.add_message_line(
                     csv_file,
                     'done',
@@ -814,7 +819,7 @@ class ImportCSVFile(ModelSQL, ModelView):
                 for k, v in addr.iteritems():
                     setattr(address, k, v)
                 address.on_change_country()
-                try: # country_zip
+                try:  # country_zip
                     address.on_change_zip()
                 except:
                     pass
@@ -840,7 +845,7 @@ class ImportCSVFile(ModelSQL, ModelView):
             if idens:
                 record.identifiers += idens
 
-            to_save.append(record) # to save
+            to_save.append(record)  # to save
 
         state = 'done'
         if to_save:
@@ -860,7 +865,7 @@ class ImportCSVFile(ModelSQL, ModelView):
                     (len(to_save),)))
 
         cls.write([csv_file], {'state': state})
-        Transaction().commit() # force to commit
+        Transaction().connection.commit()  # force to commit
 
         if profile_csv.email:
             cls.send_message('\n'.join(logs))
@@ -922,7 +927,8 @@ class ImportCSVFile(ModelSQL, ModelView):
                         else:
                             values['description'] = value
                     if column.add_to_domain:
-                        domain.append(('lines.'+column.subfield.name, '=', value))
+                        domain.append(
+                            ('lines.' + column.subfield.name, '=', value))
                     continue
                 elif row[cell]:
                     values[column.field.name] = value
@@ -963,21 +969,21 @@ class ImportCSVFile(ModelSQL, ModelView):
                     continue
 
                 if update_record and records:
-                    record, = records # to update
+                    record, = records  # to update
                     logs.append(cls.add_message_line(
                         csv_file,
                         'done',
                         'record_updated',
                         (row)))
                 else:
-                    record = Sale() # to create
+                    record = Sale()  # to create
                     logs.append(cls.add_message_line(
                         csv_file,
                         'done',
                         'record_added',
                         (row)))
             else:
-                record = Sale() # to create
+                record = Sale()  # to create
                 logs.append(cls.add_message_line(
                     csv_file,
                     'done',
@@ -1001,7 +1007,7 @@ class ImportCSVFile(ModelSQL, ModelView):
             if sale_lines:
                 record.lines += sale_lines
 
-            to_save.append(record) # to save
+            to_save.append(record)  # to save
 
         state = 'done'
         if to_save:
@@ -1021,7 +1027,7 @@ class ImportCSVFile(ModelSQL, ModelView):
                     (len(to_save),)))
 
         cls.write([csv_file], {'state': state})
-        Transaction().commit() # force to commit
+        Transaction().connection.commit()  # force to commit
 
         if profile_csv.email:
             cls.send_message('\n'.join(logs))
