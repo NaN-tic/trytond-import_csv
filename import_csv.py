@@ -413,7 +413,7 @@ class ImportCSVColumn(ModelSQL, ModelView):
             ('name', '=', values[0]),
             ])
         if records:
-            return record[0]
+            return records[0]
         else:
             return
 
