@@ -202,6 +202,13 @@ class ProfileCSVColumn(ModelSQL, ModelView):
                     'the box on the wizard.\n\n'
                     'Field: \'%s\'\n'
                     'Value: \'%s\'\n',
+                'float_format_error': 'Error importing float.\n'
+                    'Possible causes:\n\n'
+                    '\t- The format of the number is wrong.\n'
+                    '\t- The csv file has a header and you does not checked '
+                    'the box on the wizard.\n\n'
+                    'Field: \'%s\'\n'
+                    'Value: \'%s\'\n',
                 'boolean_format_error': 'Error importing boolean.\n'
                     'Possible causes:\n\n'
                     '\t- The format of the boolean is wrong.\n'
@@ -323,6 +330,15 @@ if parties:
                     error_args=(self.field.name, value))
             if value < -2147483648 or value > 2147483647:
                 self.raise_user_error('integer_too_big_error',
+                    error_args=(self.field.name, value))
+            return value
+
+    def get_float(self, values):
+        for value in values:
+            try:
+                value = float(value)
+            except:
+                self.raise_user_error('float_format_error',
                     error_args=(self.field.name, value))
             return value
 
